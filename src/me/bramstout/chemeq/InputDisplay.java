@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2017 Bram Stout
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package me.bramstout.chemeq;
 
 import javafx.beans.value.ChangeListener;
@@ -15,7 +39,11 @@ import javafx.scene.paint.Color;
 
 public class InputDisplay extends HBox{
 	
+	private Parser parser;
+	
 	public InputDisplay(TextField inputTextField) {
+		parser = new Parser();
+		
 		minWidthProperty().bind(inputTextField.widthProperty());
 		minHeightProperty().bind(inputTextField.heightProperty());
 		maxWidthProperty().bind(inputTextField.widthProperty());
@@ -44,28 +72,9 @@ public class InputDisplay extends HBox{
 	
 	public void parse(String value) {
 		getChildren().clear();
-		int index = 0;
-		while(index < value.length()) {
-			index = parseMolecule(value, index);
-			index++;
-		}
-	}
-	
-	public int parseMolecule(String value, int index) {
-		StringBuilder builder = new StringBuilder();
-		char firstChar = value.charAt(index);
-		char c = firstChar;
-		while(true) {
-			builder.append(c);
-			index++;
-			if(index >= value.length())
-				break;
-			c = value.charAt(index);
-			if((!Character.isLetter(c) && !Character.isDigit(c)))
-				break;
-		}
-		getChildren().add(new Label(builder.toString()));
-		return index;
+		
+		Reaction reaction = parser.parse(value);
+		getChildren().add(new Label(reaction.toString()));
 	}
 
 }
