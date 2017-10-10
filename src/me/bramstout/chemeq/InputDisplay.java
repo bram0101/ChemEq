@@ -37,13 +37,13 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
-public class InputDisplay extends HBox{
-	
+public class InputDisplay extends HBox {
+
 	private Parser parser;
-	
+
 	public InputDisplay(TextField inputTextField) {
 		parser = new Parser();
-		
+
 		minWidthProperty().bind(inputTextField.widthProperty());
 		minHeightProperty().bind(inputTextField.heightProperty());
 		maxWidthProperty().bind(inputTextField.widthProperty());
@@ -57,24 +57,31 @@ public class InputDisplay extends HBox{
 				inputTextField.deselect();
 				inputTextField.end();
 			}
-			
+
 		});
-		
+
 		inputTextField.textProperty().addListener(new ChangeListener<String>() {
 
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				parse(newValue);
 			}
-			
+
 		});
 	}
-	
+
 	public void parse(String value) {
 		getChildren().clear();
-		
-		Reaction reaction = parser.parse(value);
-		getChildren().add(new Label(reaction.toString()));
+		try {
+			Reaction reaction = parser.parse(value);
+			//WebView webView = new WebView();
+			//webView.getEngine().loadContent(reaction.toHTMLString());
+			//getChildren().add(webView);
+			getChildren().add(new Label(reaction.toString()));
+		} catch (Exception ex) {
+			getChildren().add(new Label("ERR: Could not parse!"));
+			ex.printStackTrace();
+		}
 	}
 
 }

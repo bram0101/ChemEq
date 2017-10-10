@@ -44,8 +44,16 @@ public class StringIterator {
 		return index < size - 1;
 	}
 	
+	public int left() {
+		return size - index - 1;
+	}
+
 	public void skip() {
 		index++;
+	}
+	
+	public void skip(int i) {
+		index += i;
 	}
 
 	public char get() {
@@ -79,7 +87,7 @@ public class StringIterator {
 	public int getIndex() {
 		return index;
 	}
-	
+
 	public void skipSpaces() {
 		while (hasNext() && Character.isWhitespace(peekNext()))
 			skip();

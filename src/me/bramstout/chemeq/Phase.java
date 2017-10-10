@@ -24,44 +24,50 @@
 
 package me.bramstout.chemeq;
 
-public class Element {
+public enum Phase {
 
-	private String data;
-	private int factor;
+	NULL("", ""), SOLID("s", "s"), LIQUID("l", "l"), GAS("g", "g"), DISSOLVED_IN_WATER("aq", "aq");
 
-	public Element(String data, int factor) {
-		this.data = data;
-		this.factor = factor;
+	private String token;
+	private String[] keys;
+
+	private Phase(String token, String... keys) {
+		this.token = token;
+		this.keys = keys;
 	}
 
-	public String getData() {
-		return data;
+	public String getToken() {
+		return token;
 	}
 
-	public int getFactor() {
-		return factor;
+	public String[] getKeys() {
+		return keys;
 	}
 
-	public void setFactor(int factor) {
-		this.factor = factor;
-	}
-	
-	public String toHTMLString() {
-		return factor == 1 ? data : data + "<sub>" + factor + "</sub>";
-	}
-	
-	@Override
-	public String toString() {
-		return factor == 1 ? data : data + factor;
-	}
-
-	@Override
-	public boolean equals(Object a) {
-		if (!(a instanceof Element))
-			return false;
-		if (((Element) a).data == data && ((Element) a).factor == factor)
-			return true;
-		return false;
+	public static Phase getPhase(StringIterator si) {
+		int i = 2;
+		if(si.left() > 1) {
+			if(si.peek(1) == '(') {
+				StringBuilder sb = new StringBuilder();
+				while(si.left() >= i) {
+					if(si.peek(i) == ')') {
+						i++;
+						break;
+					}
+					sb.append(si.peek(i++));
+				}
+				for(Phase p : values()) {
+					for(String key : p.keys) {
+						if(key.toLowerCase().contentEquals(sb.toString().toLowerCase())) {
+							si.skip(i);
+							return p;
+						}
+					}
+				}
+				i = 0;
+			}
+		}
+		return NULL;
 	}
 
 }

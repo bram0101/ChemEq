@@ -30,9 +30,12 @@ import java.util.List;
 public class Molecule extends Element {
 
 	private List<Element> elements;
+	private Phase phase;
 
-	public Molecule(List<Element> elements, int factor) {
+	public Molecule(List<Element> elements, int factor, Phase phase) {
 		super(elementsToString(elements), factor);
+		this.elements = elements;
+		this.phase = phase;
 	}
 
 	public List<Element> getElements() {
@@ -65,6 +68,10 @@ public class Molecule extends Element {
 		return allElements;
 	}
 
+	public Phase getPhase() {
+		return phase;
+	}
+
 	@Override
 	public boolean equals(Object a) {
 		if (!(a instanceof Molecule))
@@ -72,9 +79,25 @@ public class Molecule extends Element {
 		return super.equals(a);
 	}
 	
+	public String toHTMLString() {
+		StringBuilder sb = new StringBuilder();
+		if(getFactor() >= 0)
+			sb.append(getFactor());
+		sb.append("(");
+		for (Element e : elements)
+			sb.append(e.toHTMLString());
+		if(phase != Phase.NULL) {
+			sb.append("(");
+			sb.append(phase.getToken());
+			sb.append(")");
+		}
+		sb.append(")");
+		return sb.toString();
+	}
+
 	@Override
 	public String toString() {
-		return "_" + getFactor() + "(" + getData() + ")";
+		return "_" + getFactor() + "(" + getData() + (phase == Phase.NULL ? "" : ("(" + phase.getToken() + ")")) + ")";
 	}
 
 	private static String elementsToString(List<Element> elements) {
