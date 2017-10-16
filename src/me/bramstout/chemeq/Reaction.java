@@ -34,11 +34,13 @@ public class Reaction {
 	private List<Element> leftTermElements; //TODO: implement these two.
 	private List<Element> rightTermElements;
 
-	public Reaction(List<Molecule> leftTerm, List<Molecule> rightTerm, List<Element> elements) {
+	public Reaction(List<Molecule> leftTerm, List<Molecule> rightTerm, List<Element> elements, List<Element> leftTermElements, List<Element> rightTermElements) {
 		super();
 		this.leftTerm = leftTerm;
 		this.rightTerm = rightTerm;
 		this.elements = elements;
+		this.leftTermElements = leftTermElements;
+		this.rightTermElements = rightTermElements;
 	}
 
 	public List<Molecule> getLeftTerm() {
@@ -96,10 +98,18 @@ public class Reaction {
 				sb.append(" + ");
 		}
 		
-		sb.append(" {");
+		sb.append(" {elements:[");
 		for(Element e : elements)
-			sb.append(e.getData() + " = " + e.getFactor() + "; ");
-		sb.append("}");
+			sb.append(e.getData() + ": " + e.getFactor() + ", ");
+		sb.append("],");
+		sb.append(" left_term:[");
+		for(Element e : leftTermElements)
+			sb.append(e.getData() + ": " + e.getFactor() + ", ");
+		sb.append("],");
+		sb.append(" right_term:[");
+		for(Element e : rightTermElements)
+			sb.append(e.getData() + ": " + e.getFactor() + ", ");
+		sb.append("]}");
 		return sb.toString();
 	}
 

@@ -42,13 +42,20 @@ public class Parser {
 
 			List<Molecule> rightTerm = parseTerm(si);
 			List<Element> elements = new ArrayList<Element>();
+			List<Element> leftTermElements = new ArrayList<Element>();
+			List<Element> rightTermElements = new ArrayList<Element>();
 
 			for (Molecule m : leftTerm)
 				addElements(m, elements);
 			for (Molecule m : rightTerm)
 				addElements(m, elements);
+			
+			for (Molecule m : leftTerm)
+				addElements(m, leftTermElements);
+			for (Molecule m : rightTerm)
+				addElements(m, rightTermElements);
 
-			return new Reaction(leftTerm, rightTerm, elements);
+			return new Reaction(leftTerm, rightTerm, elements, leftTermElements, rightTermElements);
 		} catch (Exception ex) {
 			IllegalArgumentException e = new IllegalArgumentException(
 					"Error while parsing caused exception: " + ex.getMessage());
@@ -144,7 +151,7 @@ public class Parser {
 		return new Element(sb.toString(), factor);
 	}
 
-	private void addElements(Molecule molecule, List<Element> elements) { //TODO: this does not work well yet, mainly the updating of existing elements, it just adds a new one.
+	private void addElements(Molecule molecule, List<Element> elements) { 
 		for (Element e : molecule.getElements()) {
 			if (e instanceof Element) {
 				Element el = getElement(e.getData(), elements);
@@ -161,7 +168,7 @@ public class Parser {
 
 	private Element getElement(String data, List<Element> elements) {
 		for (Element e : elements)
-			if (e.getData() == data)
+			if (e.getData().contentEquals(data))
 				return e;
 		return null;
 	}
