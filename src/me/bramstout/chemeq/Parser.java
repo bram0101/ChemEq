@@ -24,10 +24,32 @@
 
 package me.bramstout.chemeq;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+
 public class Parser {
+
+	private DocumentBuilder documentBuilder;
+
+	public Parser() {
+		try {
+			documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public Document parseHTML(String htmlSource) throws Exception {
+		ByteArrayInputStream input = new ByteArrayInputStream(htmlSource.getBytes("UTF-8"));
+		return documentBuilder.parse(input);
+	}
 
 	public Reaction parse(String s) throws IllegalArgumentException {
 		try {
@@ -49,7 +71,7 @@ public class Parser {
 				addElements(m, elements);
 			for (Molecule m : rightTerm)
 				addElements(m, elements);
-			
+
 			for (Molecule m : leftTerm)
 				addElements(m, leftTermElements);
 			for (Molecule m : rightTerm)
@@ -151,13 +173,13 @@ public class Parser {
 		return new Element(sb.toString(), factor);
 	}
 
-	private void addElements(Molecule molecule, List<Element> elements) { 
+	private void addElements(Molecule molecule, List<Element> elements) {
 		for (Element e : molecule.getElements()) {
 			if (e instanceof Element) {
 				Element el = getElement(e.getData(), elements);
-				if(el == null) {
+				if (el == null) {
 					elements.add(new Element(e.getData(), e.getFactor()));
-				}else {
+				} else {
 					el.setFactor(el.getFactor() + e.getFactor());
 				}
 			} else {

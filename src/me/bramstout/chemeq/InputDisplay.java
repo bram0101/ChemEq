@@ -36,6 +36,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.web.WebView;
 
 public class InputDisplay extends HBox {
 
@@ -74,10 +75,10 @@ public class InputDisplay extends HBox {
 		getChildren().clear();
 		try {
 			Reaction reaction = parser.parse(value);
-			//WebView webView = new WebView();
-			//webView.getEngine().loadContent(reaction.toHTMLString());
-			//getChildren().add(webView);
-			getChildren().add(new Label(reaction.toString()));
+			WebView webView = new WebView();
+			webView.getEngine().loadContent(reaction.toHTMLString());
+			getChildren().add(webView);
+			//getChildren().add(new Label(reaction.toString()));
 		} catch (Exception ex) {
 			getChildren().add(new Label("ERR: Could not parse!"));
 			ex.printStackTrace();
