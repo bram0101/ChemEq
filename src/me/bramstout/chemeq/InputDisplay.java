@@ -24,6 +24,7 @@
 
 package me.bramstout.chemeq;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -34,11 +35,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 
-public class InputDisplay extends HBox {
+public class InputDisplay extends VBox {
 
 	private Parser parser;
 
@@ -46,9 +47,9 @@ public class InputDisplay extends HBox {
 		parser = new Parser();
 
 		minWidthProperty().bind(inputTextField.widthProperty());
-		minHeightProperty().bind(inputTextField.heightProperty());
+		minHeightProperty().bind(inputTextField.heightProperty().multiply(2));
 		maxWidthProperty().bind(inputTextField.widthProperty());
-		maxHeightProperty().bind(inputTextField.heightProperty());
+		maxHeightProperty().bind(inputTextField.heightProperty().multiply(2));
 		setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, new CornerRadii(0), new Insets(0))));
 		setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -65,6 +66,43 @@ public class InputDisplay extends HBox {
 
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				boolean hasChanged = false;
+				String parsedVal = newValue;
+				for(int i = 0; i < newValue.length(); i++) {
+					if(Character.isDigit(newValue.codePointAt(i))) {
+						boolean isIndex = false;
+						int intVal = 0;
+						int j = i - 1;
+						while(j >= 0) {
+							int codePoint = newValue.codePointAt(j);
+							int subVal = codePoint - 8320;
+							if(Character.isDigit(codePoint) || Character.isLetter(codePoint) || (subVal >= 0 && subVal < 10)) {
+								if(Character.isDigit(codePoint) || (subVal >= 0 && subVal < 10)) {
+									j--;
+									continue;
+								}else {
+									isIndex = true;
+									intVal = Character.getNumericValue(newValue.codePointAt(i));
+									break;
+								}
+							}else {
+								break;
+							}
+						}
+						if(isIndex) {
+							hasChanged = true;
+							parsedVal = newValue.substring(0, i) + new String(new int[] {8320 + intVal}, 0, 1) + newValue.substring(i + 1, newValue.length());
+						}
+					}
+				}
+				if(hasChanged) {
+					final String newText = parsedVal;
+					Platform.runLater(()->{
+						int carrotPosition = inputTextField.getCaretPosition();
+						inputTextField.setText(newText);
+						inputTextField.positionCaret(carrotPosition);
+					});
+				}
 				parse(newValue);
 			}
 
@@ -78,7 +116,7 @@ public class InputDisplay extends HBox {
 			WebView webView = new WebView();
 			webView.getEngine().loadContent(reaction.toHTMLString());
 			getChildren().add(webView);
-			//getChildren().add(new Label(reaction.toString()));
+			getChildren().add(new Label(reaction.toString()));
 		} catch (Exception ex) {
 			getChildren().add(new Label("ERR: Could not parse!"));
 			ex.printStackTrace();

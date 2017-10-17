@@ -36,8 +36,8 @@ public class StringIterator {
 		this.size = s.length();
 	}
 
-	public char next() {
-		return s.charAt(++index);
+	public int next() {
+		return s.codePointAt(++index);
 	}
 
 	public boolean hasNext() {
@@ -56,24 +56,24 @@ public class StringIterator {
 		index += i;
 	}
 
-	public char get() {
-		return s.charAt(index);
+	public int get() {
+		return s.codePointAt(index);
 	}
 
-	public char peekNext() {
-		return s.charAt(index + 1);
+	public int peekNext() {
+		return s.codePointAt(index + 1);
 	}
 
-	public char peekPrevious() {
-		return s.charAt(index - 1);
+	public int peekPrevious() {
+		return s.codePointAt(index - 1);
 	}
 
-	public char peek(int offset) {
-		return s.charAt(index + offset);
+	public int peek(int offset) {
+		return s.codePointAt(index + offset);
 	}
 
-	public char first() {
-		return s.charAt(0);
+	public int first() {
+		return s.codePointAt(0);
 	}
 
 	public void reset() {
@@ -89,8 +89,34 @@ public class StringIterator {
 	}
 
 	public void skipSpaces() {
-		while (hasNext() && Character.isWhitespace(peekNext()))
+		while (hasNext() && isWhitespace(peekNext()))
 			skip();
+	}
+	
+	public boolean isDigit(int codePoint) {
+		int subVal = codePoint - 8320;
+		return Character.isDigit(codePoint) || (subVal >= 0 && subVal < 10);
+	}
+	
+	public boolean isWhitespace(int codePoint) {
+		return Character.isWhitespace(codePoint);
+	}
+	
+	public boolean isLetter(int codePoint) {
+		return Character.isLetter(codePoint);
+	}
+	
+	public boolean isLowerCase(int codePoint) {
+		return Character.isLowerCase(codePoint);
+	}
+	
+	public boolean isUpperCase(int codePoint) {
+		return Character.isUpperCase(codePoint);
+	}
+	
+	public int getIntValue(int codePoint) {
+		int subVal = codePoint - 8320;
+		return (subVal >= 0 && subVal < 10) ? subVal : Character.getNumericValue(codePoint);
 	}
 
 }

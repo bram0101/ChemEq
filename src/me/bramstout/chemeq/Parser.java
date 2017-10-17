@@ -57,8 +57,8 @@ public class Parser {
 
 			List<Molecule> leftTerm = parseTerm(si);
 
-			while (si.hasNext() && !Character.isWhitespace(si.peekNext()) && !Character.isDigit(si.peekNext())
-					&& !Character.isLetter(si.peekNext()))
+			while (si.hasNext() && !si.isWhitespace(si.peekNext()) && !si.isDigit(si.peekNext())
+					&& !si.isLetter(si.peekNext()))
 				si.skip();
 			si.skipSpaces();
 
@@ -91,14 +91,14 @@ public class Parser {
 
 		while (si.hasNext()) {
 			si.skipSpaces();
-			char c = si.peekNext();
-			if (c == '=' || c == '-')
+			int c = si.peekNext();
+			if (c == (int) '=' || c == (int) '-')
 				break;
-			if (c == '+') {
+			if (c == (int) '+') {
 				si.skip();
 				si.skipSpaces();
 			}
-			while (si.hasNext() && !Character.isLetter(si.peekNext()) && !Character.isDigit(si.peekNext()))
+			while (si.hasNext() && !si.isLetter(si.peekNext()) && !si.isDigit(si.peekNext()))
 				si.skip();
 			term.add(parseMolecule(si));
 		}
@@ -114,17 +114,17 @@ public class Parser {
 		if (!si.hasNext())
 			return new Molecule(elements, factor, Phase.NULL);
 
-		if (Character.isDigit(si.peekNext())) {
+		if (si.isDigit(si.peekNext())) {
 			StringBuilder sb = new StringBuilder();
-			while (si.hasNext() && Character.isDigit(si.peekNext())) {
-				sb.append(si.next());
+			while (si.hasNext() && si.isDigit(si.peekNext())) {
+				sb.append(si.getIntValue(si.next()));
 			}
 			factor = Integer.parseInt(sb.toString());
 			si.skipSpaces();
 		}
 
 		while (si.hasNext()) {
-			if (si.peekNext() == '(') {
+			if (si.peekNext() == (int) '(') {
 				Phase p = Phase.getPhase(si);
 				if (p != Phase.NULL) {
 					phase = p;
@@ -133,19 +133,19 @@ public class Parser {
 
 				si.skip();
 				Molecule m = parseMolecule(si);
-				if (si.hasNext() && si.peekNext() != ')')
+				if (si.hasNext() && si.peekNext() != (int) ')')
 					throw new IllegalArgumentException("Err: inline molecule has no closure. Missing ')' at "
-							+ si.getIndex() + ", found character '" + si.peekNext() + "'");
+							+ si.getIndex() + ", found si '" + si.peekNext() + "'");
 				si.skip();
-				if (si.hasNext() && Character.isDigit(si.peekNext())) {
+				if (si.hasNext() && si.isDigit(si.peekNext())) {
 					StringBuilder sb = new StringBuilder();
-					while (si.hasNext() && Character.isDigit(si.peekNext())) {
-						sb.append(si.next());
+					while (si.hasNext() && si.isDigit(si.peekNext())) {
+						sb.append(si.getIntValue(si.next()));
 					}
 					m.setFactor(Integer.parseInt(sb.toString()));
 				}
 				elements.add(m);
-			} else if (Character.isLetter(si.peekNext())) {
+			} else if (si.isLetter(si.peekNext())) {
 				elements.add(parseElement(si));
 			} else {
 				break;
@@ -159,14 +159,14 @@ public class Parser {
 		StringBuilder sb = new StringBuilder();
 		int factor = 1;
 		while (si.hasNext()) {
-			sb.append(si.next());
-			if (si.hasNext() && (Character.isDigit(si.peekNext()) || !Character.isLowerCase(si.peekNext())))
+			sb.append((char) si.next());
+			if (si.hasNext() && (si.isDigit(si.peekNext()) || !si.isLowerCase(si.peekNext())))
 				break;
 		}
-		if (si.hasNext() && Character.isDigit(si.peekNext())) {
+		if (si.hasNext() && si.isDigit(si.peekNext())) {
 			StringBuilder sb2 = new StringBuilder();
-			while (si.hasNext() && Character.isDigit(si.peekNext())) {
-				sb2.append(si.next());
+			while (si.hasNext() && si.isDigit(si.peekNext())) {
+				sb2.append(si.getIntValue(si.next()));
 			}
 			factor = Integer.parseInt(sb2.toString());
 		}

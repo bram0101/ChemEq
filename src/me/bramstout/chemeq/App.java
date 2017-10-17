@@ -24,13 +24,6 @@
 
 package me.bramstout.chemeq;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -50,13 +43,13 @@ public class App extends Application {
 	private VBox inputPane;
 	 private TextField inputTextField;
 	 private InputDisplay inputDisplay;
-	private Parser parser;
+	//private Parser parser;
 
 	@Override
 	public void start(Stage arg0) throws Exception {
 		final double windowWidth = 1280, windowHeight = 720;
 
-		parser = new Parser();
+		//parser = new Parser();
 
 		root = new BorderPane();
 
@@ -144,7 +137,7 @@ public class App extends Application {
 		arg0.show();
 	}
 
-	private org.w3c.dom.Element getContentElement(Document doc) {
+	/*private org.w3c.dom.Element getContentElement(Document doc) {
 		NodeList bodyList = doc.getDocumentElement().getElementsByTagName("body");
 		org.w3c.dom.Element body = (org.w3c.dom.Element) bodyList.item(0);
 		System.out.println(body);
@@ -197,7 +190,7 @@ public class App extends Application {
 		if (paragraph != null) {
 			body.appendChild(paragraph);
 		}
-	}
+	}*/
 
 	public static void run(String[] args) {
 		App.launch(args);
