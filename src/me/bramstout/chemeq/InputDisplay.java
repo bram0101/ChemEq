@@ -76,7 +76,7 @@ public class InputDisplay extends VBox {
 						while(j >= 0) {
 							int codePoint = newValue.codePointAt(j);
 							int subVal = codePoint - 8320;
-							if(Character.isDigit(codePoint) || Character.isLetter(codePoint) || (subVal >= 0 && subVal < 10)) {
+							if(Character.isDigit(codePoint) || Character.isLetter(codePoint) || (subVal >= 0 && subVal < 10) || codePoint == (int) ')') {
 								if(Character.isDigit(codePoint) || (subVal >= 0 && subVal < 10)) {
 									j--;
 									continue;
