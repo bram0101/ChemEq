@@ -1,0 +1,6 @@
+C3H8 + O2 = CO2 + H2O					CORRECT: 1(C3H8) + 5(O2) = 3(CO2) + 4(H2O)
+C12H22O11 + O2 = CO2 + H2O				CORRECT: 1(C12H22O11) + 12(O2) = 12(CO2) + 11(H2O)
+N2O5 = NO2 + O2							CORRECT: 2(N2O5) = 4(NO2) + (O2)
+CaCl2 + AgNO3 = AgCl + Ca(NO3)2			CORRECT: 1(CaCl2) + 2(AgNO3) = 2(AgCl) + (Ca(NO3)2)
+KClO3 = KCl + O2						CORRECT: 2(KClO3) = 2(KCl) + 3(O2)
+Mg + AlCl3 = Al + MgCl2					CORRECT: 3(Mg) + 2(AlCl3) = 2(Al) + 3(MgCl2)

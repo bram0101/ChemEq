@@ -31,7 +31,7 @@ public class Reaction {
 	private List<Molecule> leftTerm;
 	private List<Molecule> rightTerm;
 	private List<Element> elements;
-	private List<Element> leftTermElements; //TODO: implement these two.
+	private List<Element> leftTermElements;
 	private List<Element> rightTermElements;
 
 	public Reaction(List<Molecule> leftTerm, List<Molecule> rightTerm, List<Element> elements, List<Element> leftTermElements, List<Element> rightTermElements) {
@@ -65,6 +65,14 @@ public class Reaction {
 
 	public void setElements(List<Element> elements) {
 		this.elements = elements;
+	}
+	
+	public List<Element> getLeftTermElements(){
+		return leftTermElements;
+	}
+	
+	public List<Element> getRightTermElements(){
+		return rightTermElements;
 	}
 	
 	public String toHTMLString() {
@@ -111,6 +119,10 @@ public class Reaction {
 			sb.append(e.getData() + ": " + e.getFactor() + ", ");
 		sb.append("]}");
 		return sb.toString();
+	}
+
+	public Reaction copy() {
+		return new Reaction(leftTerm, rightTerm, elements, leftTermElements, rightTermElements);
 	}
 
 }

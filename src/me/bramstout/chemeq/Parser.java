@@ -53,7 +53,7 @@ public class Parser {
 
 	public Reaction parse(String s) throws IllegalArgumentException {
 		try {
-			StringIterator si = new StringIterator(" " + s.trim().replace('\t', ' '));
+			StringIterator si = new StringIterator(" " + s.trim().replace('\t', ' ').replace('[', '(').replace(']', ')'));
 
 			List<Molecule> leftTerm = parseTerm(si);
 
@@ -175,7 +175,7 @@ public class Parser {
 
 	private void addElements(Molecule molecule, List<Element> elements) {
 		for (Element e : molecule.getElements()) {
-			if (e instanceof Element) {
+			if (!(e instanceof Molecule)) {
 				Element el = getElement(e.getData(), elements);
 				if (el == null) {
 					elements.add(new Element(e.getData(), e.getFactor()));

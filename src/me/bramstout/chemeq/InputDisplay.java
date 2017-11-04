@@ -42,9 +42,11 @@ import javafx.scene.web.WebView;
 public class InputDisplay extends VBox {
 
 	private Parser parser;
+	private Solver solver;
 
 	public InputDisplay(TextField inputTextField) {
 		parser = new Parser();
+		solver = new Solver();
 
 		minWidthProperty().bind(inputTextField.widthProperty());
 		minHeightProperty().bind(inputTextField.heightProperty().multiply(2));
@@ -65,7 +67,15 @@ public class InputDisplay extends VBox {
 		inputTextField.textProperty().addListener(new ChangeListener<String>() {
 
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String strValue) {
+				String newValue = strValue;
+				for(int i = 0; i < strValue.length(); i++) {
+					int codePoint = strValue.codePointAt(i);
+					int subVal = codePoint - 8320;
+					if(subVal >= 0 && subVal < 10) {
+						newValue = newValue.substring(0, i) + subVal + newValue.substring(i + 1, newValue.length());
+					}
+				}
 				boolean hasChanged = false;
 				String parsedVal = newValue;
 				for(int i = 0; i < newValue.length(); i++) {
@@ -91,7 +101,7 @@ public class InputDisplay extends VBox {
 						}
 						if(isIndex) {
 							hasChanged = true;
-							parsedVal = newValue.substring(0, i) + new String(new int[] {8320 + intVal}, 0, 1) + newValue.substring(i + 1, newValue.length());
+							parsedVal = parsedVal.substring(0, i) + new String(new int[] {8320 + intVal}, 0, 1) + parsedVal.substring(i + 1, parsedVal.length());
 						}
 					}
 				}
@@ -117,6 +127,14 @@ public class InputDisplay extends VBox {
 			webView.getEngine().loadContent(reaction.toHTMLString());
 			getChildren().add(webView);
 			getChildren().add(new Label(reaction.toString()));
+			try {
+				Reaction r = solver.solve(reaction);
+				WebView webView2 = new WebView();
+				webView2.getEngine().loadContent(r.toHTMLString());
+				getChildren().add(webView2);
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
 		} catch (Exception ex) {
 			getChildren().add(new Label("ERR: Could not parse!"));
 			ex.printStackTrace();

@@ -44,13 +44,25 @@ public class Molecule extends Element {
 
 	public boolean hasElement(Element e) {
 		for (Element el : elements) {
-			if (el.equals(e))
-				return true;
 			if (el instanceof Molecule)
 				if (((Molecule) el).hasElement(e))
 					return true;
+			if (el.getData().contentEquals(e.getData()))
+				return true;
 		}
 		return false;
+	}
+	
+	public int getElementFactor(Element e) {
+		int elementFactor = 0;
+		for(Element el : elements) {
+			if (el instanceof Molecule)
+				elementFactor += ((Molecule) el).getElementFactor(e);
+			else
+				if(el.getData().contentEquals(e.getData()))
+					elementFactor += el.getFactor();
+		}
+		return elementFactor;
 	}
 
 	public Element getFirstElement(String e) {
