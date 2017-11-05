@@ -24,29 +24,75 @@
 
 package me.bramstout.chemeq;
 
+/**
+ * (NL) Deze klas vertegenwoordigt een term in een vergelijking. <br>
+ * (EN) This class represents a term in an equation.
+ * 
+ * @author Bram Stout
+ *
+ */
 public class Term {
 
+	/**
+	 * (NL) Het id van de molecuul die deze term vertegenwoordigd. <br>
+	 * (EN) The id of the molecule this term represents.
+	 */
 	private int id;
 
+	/**
+	 * (NL) De factor van deze term. <br>
+	 * (EN) The factor of this term.
+	 */
 	private double factor;
 
+	/**
+	 * (NL) Constructor. <br>
+	 * (EN) Constructor.
+	 * 
+	 * @param id
+	 *            (NL) De id van de molecuul. (EN) The id of the molecule.
+	 * @param factor
+	 *            (NL) De factor van deze term. (EN) The factor of this term.
+	 */
 	public Term(int id, double factor) {
 		this.id = id;
 		this.factor = factor;
 	}
 
+	/**
+	 * (NL) Getter voor de id. (EN) Getter for the id.
+	 * 
+	 * @return (NL) Id. (EN) Id.
+	 */
 	public int getId() {
 		return id;
 	}
 
+	/**
+	 * (NL) Getter voor de factor. <br>
+	 * (EN) Getter for the factor.
+	 * 
+	 * @return (NL) De factor. <br>
+	 *         (EN) The factor.
+	 */
 	public double getFactor() {
 		return factor;
 	}
 
+	/**
+	 * (NL) Setter voor de factor. <br>
+	 * (EN) Setter for the factor.
+	 * 
+	 * @param factor
+	 */
 	public void setFactor(double factor) {
 		this.factor = factor;
 	}
 
+	/**
+	 * (NL) Kijkt of dit object gelijk is aan het andere object. <br>
+	 * (EN) Checks if the object is equal to this object.
+	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object == null)

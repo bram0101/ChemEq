@@ -27,24 +27,61 @@ package me.bramstout.chemeq;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * (NL) Deze klas zet een reactievergelijking als tekst om naar de klass
+ * 'Reaction' om door een solver gebruikt te kunnen worden. <br>
+ * (EN) This class converts an equation in text form, to the class 'Reaction',
+ * to be used by the solver.
+ * 
+ * @author Bram Stout
+ *
+ */
 public class Parser {
 
+	/**
+	 * (NL) Constructor. <br>
+	 * (EN) Constructor.
+	 */
 	public Parser() {
 	}
 
+	/**
+	 * (NL) Zet een String object om naar een Reaction object. <br>
+	 * (EN) Converts a String object to a Reaction object.
+	 * 
+	 * @param s
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	public Reaction parse(String s) throws IllegalArgumentException {
 		try {
+			// (NL) Maak een StringIterator object om over elke karakter te gaan. Wij
+			// vervangen nu alvast wat karakters met andere om de andere code simpeler te
+			// maken.
+			// (EN) Make a StringIterator object to iterate over all the characters. We
+			// replace some characters already to make the code simpler.
 			StringIterator si = new StringIterator(
 					" " + s.trim().replace('\t', ' ').replace('[', '(').replace(']', ')'));
 
+			// (NL) Roep een methode om de linker kant van de vergelijking te parsen.
+			// (EN) Call a method to parser the left side of the equation.
 			List<Molecule> leftTerm = parseTerm(si);
 
+			// (NL) Sla alle rare tekens over, waaronder de '=' en '->'.
+			// (EN) Skip all weird characters, including '=' and '->'.
 			while (si.hasNext() && !si.isWhitespace(si.peekNext()) && !si.isDigit(si.peekNext())
 					&& !si.isLetter(si.peekNext()))
 				si.skip();
 			si.skipSpaces();
 
+			// (NL) Parse de rechter helft.
+			// (EN) Parse the right half.
 			List<Molecule> rightTerm = parseTerm(si);
+
+			// (NL) Kijk welke atoomsoorten en hoeveel wij in totaal hebben, en ook voor
+			// enkel de linker en rechter kant.
+			// (EN) Check which types of atoms and how much we have in total, and for just
+			// the left and right side.
 			List<Element> elements = new ArrayList<Element>();
 			List<Element> leftTermElements = new ArrayList<Element>();
 			List<Element> rightTermElements = new ArrayList<Element>();
@@ -59,8 +96,13 @@ public class Parser {
 			for (Molecule m : rightTerm)
 				addElements(m, rightTermElements);
 
+			// (NL) Geef het nieuwe object terug.
+			// (EN) Return the new object.
 			return new Reaction(leftTerm, rightTerm, elements, leftTermElements, rightTermElements);
 		} catch (Exception ex) {
+			// (NL) Als er ergens een fout is, dan wordt dit stukje geroepen.
+			// (EN) If there is an error anywhere while parsing, this piece of code is
+			// called.
 			IllegalArgumentException e = new IllegalArgumentException(
 					"Error while parsing caused exception: " + ex.getMessage());
 			e.initCause(ex);
@@ -68,34 +110,73 @@ public class Parser {
 		}
 	}
 
+	/**
+	 * (NL) Parse een hele kant van de vergelijking. <br>
+	 * (EN) Parse a whole side of the equation.
+	 * 
+	 * @param si
+	 *            (NL) De StringIterator object. (EN) The StringIterator object.
+	 * @return (NL) De lijst met moleculen in die kant. (EN) The list of molecules
+	 *         on that side.
+	 * @throws IllegalArgumentException
+	 */
 	private List<Molecule> parseTerm(StringIterator si) throws IllegalArgumentException {
 		List<Molecule> term = new ArrayList<Molecule>();
 
+		// (NL) Ga steeds naar de volgende karakter. Stop wanneer wij een '=' of '-'
+		// raken, of wanneer wij aan het einde van de invoer zijn.
+		// (EN) Keep going to the next character. Stop when we encounter a '=' or '-',
+		// or when we hit the end of the input.
 		while (si.hasNext()) {
 			si.skipSpaces();
+
 			int c = si.peekNext();
+
 			if (c == (int) '=' || c == (int) '-')
 				break;
 			if (c == (int) '+') {
 				si.skip();
 				si.skipSpaces();
 			}
+
 			while (si.hasNext() && !si.isLetter(si.peekNext()) && !si.isDigit(si.peekNext()))
 				si.skip();
+
+			// (NL) Wou zouden nu een molecuul moeten hebben geraakt. Dus parse die
+			// molecuul.
+			// (EN) We should have encountered a molecule, so parse the molecule.
 			term.add(parseMolecule(si));
 		}
 
 		return term;
 	}
 
+	/**
+	 * (NL) Parse een molecuul. <br>
+	 * (EN) Parse a molecule
+	 * 
+	 * @param si
+	 *            (NL) De StringIterator object. (EN) The StringIterator object.
+	 * @return (NL) De molecuul. (EN) The molecule.
+	 * @throws IllegalArgumentException
+	 */
 	private Molecule parseMolecule(StringIterator si) throws IllegalArgumentException {
+		// (NL) Maak alvast alle gegevens klaar om te vullen.
+		// (EN) Prepare all the data to be filled in later.
 		List<Element> elements = new ArrayList<Element>();
 		int factor = -1;
 		Phase phase = Phase.NULL;
 
+		// (NL) Als wij aan het einde van de invoer zitten, dan geven wij gewoon een
+		// lege molecuul weer.
+		// (EN) If we are at the end of the input, we just return an empty molecule.
 		if (!si.hasNext())
 			return new Molecule(elements, factor, Phase.NULL);
 
+		// (NL) Kijk of het begint met een cijfer, zoja, dan is het een coëfficiënt en
+		// lezen wij de.
+		// (EN) Check if it starts with a number. If so, it is the coefficient and we
+		// read that.
 		if (si.isDigit(si.peekNext())) {
 			StringBuilder sb = new StringBuilder();
 			while (si.hasNext() && si.isDigit(si.peekNext())) {
@@ -105,8 +186,17 @@ public class Parser {
 			si.skipSpaces();
 		}
 
+		// (NL) Ga langs elke karakter om te kijken naar elementen.
+		// (EN) Iterate over every character to search for elements.
 		while (si.hasNext()) {
+			// (NL) Als het begint met een '(' dan is het of een fase of een molecuul in een
+			// molecuul.
+			// (EN) If it starts with a '(' then it is either a phase or a molecule in a
+			// molecule.
 			if (si.peekNext() == (int) '(') {
+				// (NL) Kijk of het een fase is, anders dan laten roepen wij de 'parseMolecule'
+				// methode.
+				// (EN) Check if it is a phase, else we call the 'parseMolecule' method.
 				Phase p = Phase.getPhase(si);
 				if (p != Phase.NULL) {
 					phase = p;
@@ -118,6 +208,8 @@ public class Parser {
 				if (si.hasNext() && si.peekNext() != (int) ')')
 					throw new IllegalArgumentException("Err: inline molecule has no closure. Missing ')' at "
 							+ si.getIndex() + ", found si '" + si.peekNext() + "'");
+				// (NL) Kijk of er enige indexes zijn voor de molecuul als element.
+				// (EN) Check for any indices for the molecule as element.
 				si.skip();
 				if (si.hasNext() && si.isDigit(si.peekNext())) {
 					StringBuilder sb = new StringBuilder();
@@ -128,23 +220,47 @@ public class Parser {
 				}
 				elements.add(m);
 			} else if (si.isLetter(si.peekNext())) {
+				// (NL) Als het begint met een letter, dan is het een element en parsen wij die.
+				// (EN) If it starts with a letter, it is an element and we parse it.
 				elements.add(parseElement(si));
 			} else {
+				// (NL) Wij hebben iets anders gevonden, dus is de molecuul voorbij.
+				// (EN) We encountered something different, so the molecule is over.
 				break;
 			}
 		}
 
+		// (NL) Geef de nieuwe molecuul als object terug.
+		// (EN) Return the new molecule as an object.
 		return new Molecule(elements, factor, phase);
 	}
 
+	/**
+	 * (NL) Parse een element. <br>
+	 * (EN) Parse an element.
+	 * 
+	 * @param si
+	 *            (NL) De StringIterator object. (EN) The StringIterator object.
+	 * @return (NL) De element. (EN) The element.
+	 * @throws IllegalArgumentException
+	 */
 	private Element parseElement(StringIterator si) throws IllegalArgumentException {
 		StringBuilder sb = new StringBuilder();
 		int factor = 1;
+
+		// (NL) Voeg elke letter toe aan de StringBuilder. Stop wanneer het geen letter
+		// is, of als het een hoofdletter is, omdat dan het een nieuw element is.
+		// (EN) Add every letter to a StringBuilder. Stop when it is not a letter
+		// anymore, or when it is upper case, because it is then a new element.
 		while (si.hasNext()) {
 			sb.append((char) si.next());
 			if (si.hasNext() && (si.isDigit(si.peekNext()) || !si.isLowerCase(si.peekNext())))
 				break;
 		}
+
+		// (NL) Als er een cijfer achter zit, dan willen wij het getal krijgen en als
+		// index zetten.
+		// (EN) If there is a number behind it, we want that and set it as the index.
 		if (si.hasNext() && si.isDigit(si.peekNext())) {
 			StringBuilder sb2 = new StringBuilder();
 			while (si.hasNext() && si.isDigit(si.peekNext())) {
@@ -152,9 +268,21 @@ public class Parser {
 			}
 			factor = Integer.parseInt(sb2.toString());
 		}
+
+		// (NL) Geef de element als object terug.
+		// (EN) Return the element as an object.
 		return new Element(sb.toString(), factor);
 	}
 
+	/**
+	 * (NL) Voeg alle elementen in een molecuul toe aan de lijst. <br>
+	 * (EN) Add all the elements in a molecule to a list.
+	 * 
+	 * @param molecule
+	 *            (NL) De molecuul. (EN) The molecule.
+	 * @param elements
+	 *            (NL) De lijst. (EN) The list.
+	 */
 	private void addElements(Molecule molecule, List<Element> elements) {
 		for (Element e : molecule.getElements()) {
 			if (!(e instanceof Molecule)) {
@@ -170,6 +298,19 @@ public class Parser {
 		}
 	}
 
+	/**
+	 * (NL) Krijg de element met dezelfde atoomsoort uit de lijst. Het is 'null' als
+	 * die niet bestaat. <br>
+	 * (EN) Get the element with the same type from the list. It is 'null' when it
+	 * does not exist.
+	 * 
+	 * @param data
+	 *            (NL) De atoomsoort. (EN) The type
+	 * @param elements
+	 *            (NL) De lijst. (EN) The list.
+	 * @return (NL) De element, of 'null' als die niet bestaat. (EN) The element, or
+	 *         'null' if it does not exist.
+	 */
 	private Element getElement(String data, List<Element> elements) {
 		for (Element e : elements)
 			if (e.getData().contentEquals(data))

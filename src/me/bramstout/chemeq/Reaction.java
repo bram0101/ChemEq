@@ -26,14 +26,51 @@ package me.bramstout.chemeq;
 
 import java.util.List;
 
+/**
+ * (NL) Vertegenwoordigt een chemische reactie. <br>
+ * (EN) Represents a chemical reaction.
+ * 
+ * @author Bram Stout
+ *
+ */
 public class Reaction {
 
+	/**
+	 * (NL) Alle moleculen aan de linker kant. <br>
+	 * (EN) All the molecules on the left side.
+	 */
 	private List<Molecule> leftTerm;
+	/**
+	 * (NL) Alle moleculen aan de rechter kant. <br>
+	 * (EN) All the molecules on the right side.
+	 */
 	private List<Molecule> rightTerm;
+	/**
+	 * (NL) Alle atoomsoorten in de vergelijking. <br>
+	 * (EN) All types of atoms in the reaction.
+	 */
 	private List<Element> elements;
+	/**
+	 * (NL) Alle atoomsoorten aan de linker kant. <br>
+	 * (EN) All types of atoms on the left side.
+	 */
 	private List<Element> leftTermElements;
+	/**
+	 * (NL) Alle atoomsoorten aan de rechter kant. <br>
+	 * (EN) All types of atoms on the right side.
+	 */
 	private List<Element> rightTermElements;
 
+	/**
+	 * (NL) Constructor. <br>
+	 * (EN) Constructor.
+	 * 
+	 * @param leftTerm
+	 * @param rightTerm
+	 * @param elements
+	 * @param leftTermElements
+	 * @param rightTermElements
+	 */
 	public Reaction(List<Molecule> leftTerm, List<Molecule> rightTerm, List<Element> elements,
 			List<Element> leftTermElements, List<Element> rightTermElements) {
 		super();
@@ -44,38 +81,92 @@ public class Reaction {
 		this.rightTermElements = rightTermElements;
 	}
 
+	/**
+	 * (NL) Getter voor de moleculen aan de linker kant. <br>
+	 * (EN) Getter for the molecules on the left side.
+	 * 
+	 * @return
+	 */
 	public List<Molecule> getLeftTerm() {
 		return leftTerm;
 	}
 
+	/**
+	 * (NL) Setter voor de moleculen aan de linker kant. <br>
+	 * (EN) Setter for the molecules on the left side.
+	 * 
+	 * @return
+	 */
 	public void setLeftTerm(List<Molecule> leftTerm) {
 		this.leftTerm = leftTerm;
 	}
 
+	/**
+	 * (NL) Getter voor de moleculen aan de rechter kant. <br>
+	 * (EN) Getter for the molecules on the right side.
+	 * 
+	 * @return
+	 */
 	public List<Molecule> getRightTerm() {
 		return rightTerm;
 	}
 
+	/**
+	 * (NL) Setter voor de moleculen aan de rechter kant. <br>
+	 * (EN) Setter for the molecules on the right side.
+	 * 
+	 * @return
+	 */
 	public void setRightTerm(List<Molecule> rightTerm) {
 		this.rightTerm = rightTerm;
 	}
 
+	/**
+	 * (NL) Getter voor alle moleculen in de vergelijking. <br>
+	 * (EN) Getter for all types of atoms in the reaction.
+	 * 
+	 * @return
+	 */
 	public List<Element> getElements() {
 		return elements;
 	}
 
+	/**
+	 * (NL) Setter voor alle moleculen in de vergelijking. <br>
+	 * (EN) Setter for all types of atoms in the reaction.
+	 * 
+	 * @return
+	 */
 	public void setElements(List<Element> elements) {
 		this.elements = elements;
 	}
 
+	/**
+	 * (NL) Setter voor alle atoomsoorten aan de linker kant. <br>
+	 * (EN) Setter for all types of atoms on the left side.
+	 * 
+	 * @return
+	 */
 	public List<Element> getLeftTermElements() {
 		return leftTermElements;
 	}
 
+	/**
+	 * (NL) Setter voor alle atoomsoorten aan de rechter kant. <br>
+	 * (EN) Setter for all types of atoms on the right side.
+	 * 
+	 * @return
+	 */
 	public List<Element> getRightTermElements() {
 		return rightTermElements;
 	}
 
+	/**
+	 * (NL) Geef deze reactievergelijking weer voor gebruik in HTMl. <br>
+	 * (EN) Represents this chemical equation for use in HTMl
+	 * 
+	 * @return (NL) Een string met HTML code. (EN) A string with HTML code.
+	 */
 	public String toHTMLString() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < leftTerm.size(); i++) {
@@ -92,6 +183,10 @@ public class Reaction {
 		return sb.toString();
 	}
 
+	/**
+	 * (NL) Geeft deze reactievergelijking weer als text. <br>
+	 * (EN) Represents this chemical reaction as a string.
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -122,6 +217,12 @@ public class Reaction {
 		return sb.toString();
 	}
 
+	/**
+	 * (NL) Maak een kopie van deze vergelijking. <br>
+	 * (EN) Make a copy of this equation.
+	 * 
+	 * @return (NL) Een kopie. (EN) A copy.
+	 */
 	public Reaction copy() {
 		return new Reaction(leftTerm, rightTerm, elements, leftTermElements, rightTermElements);
 	}

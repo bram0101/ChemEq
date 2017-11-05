@@ -28,6 +28,12 @@ import java.math.BigInteger;
 
 public class MathUtil {
 
+	/**
+	 * (NL) Deze methode geeft de waarde van de noemer van de meest vereenvoudigste breuk die de waarde weergeeft. <br>
+	 * (EN) This method returns the value of the denominator of the most reduced fraction that represents the value.
+	 * @param value (NL) De waarde als kommagetal. (EN) The value as a decimal number.
+	 * @return (NL) De noemer. (EN) The denominator.
+	 */
 	public static int approximateDivisor(double value) {
 		final double EPSILON = .000001d;
 
@@ -49,15 +55,35 @@ public class MathUtil {
 		return d;
 	}
 
+	/**
+	 * (NL) Geeft de grootste gemeenschappelijke deler. <br>
+	 * (EN) Returns the greatest common devisor.
+	 * @param a (NL) Een waarde. (EN) A value.
+	 * @param b (NL) Een andere waarde. (EN) Another value.
+	 * @return (NL) De grootste gemeenschappelijke deler. (EN) The greatest common divisor.
+	 */
 	private static long gcd(long a, long b) {
 		BigInteger bi1 = BigInteger.valueOf(a);
 		return bi1.gcd(BigInteger.valueOf(b)).intValue();
 	}
 
+	/**
+	 * (NL) Geeft de kleinste gemeenschappelijke veelvoud weer. <br>
+	 * (EN) Returns the lowest common multiple.
+	 * @param a (NL) Een waarde. (EN) A value.
+	 * @param b (NL) Een andere waarde. (EN) Another value.
+	 * @return (NL) De kleinste gemeenschappelijke veelvoud. (EN) The lowest common multiple.
+	 */
 	private static long lcm(long a, long b) {
 		return a * (b / gcd(a, b));
 	}
 
+	/***
+	 * (NL) Geeft de kleinste gemeenschappelijke veelvoud van een reeks getallen weer. <br>
+	 * (EN) Returns the lowest common multiple of a series of numbers.
+	 * @param input (NL) De reeks getallen. (EN) The series of numbers.
+	 * @return (NL) De kleinste gemeenschappelijke veelvoud. (EN) The lowest common multiple.
+	 */
 	private static long lcm(long[] input) {
 		long result = input[0];
 		for (int i = 1; i < input.length; i++)
@@ -65,6 +91,12 @@ public class MathUtil {
 		return result;
 	}
 
+	/***
+	 * (NL) Geeft de kleinste gemeenschappelijke veelvoud van een reeks kommagetallen weer. <br>
+	 * (EN) Returns the lowest common multiple of a series of decimal numbers.
+	 * @param input (NL) De reeks getallen. (EN) The series of numbers.
+	 * @return (NL) De kleinste gemeenschappelijke veelvoud. (EN) The lowest common multiple.
+	 */
 	public static long getLCM(double... a) {
 		long[] divisors = new long[a.length];
 

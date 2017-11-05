@@ -24,24 +24,73 @@
 
 package me.bramstout.chemeq;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * (NL) Deze klas vertegenwoordigt een molecuul in een reactievergelijking. Het
+ * is onderdeel van de klas 'Element' zodat je een molecuul in een molecuul kan
+ * zetten. Sommige moleculen worden zo opgeschreven<br>
+ * (EN) This class represents a molecule in a chemical reaction. It extends the
+ * class 'Element' to support having a molecule inside a molecule. Some
+ * molecules are noted this way.
+ * 
+ * @author Bram Stout
+ *
+ */
 public class Molecule extends Element {
 
+	/**
+	 * (NL) De lijst met elementen en moleculen in deze molecuul. <br>
+	 * (EN) The list of elements and molecules in this molecule.
+	 */
 	private List<Element> elements;
+	/**
+	 * (NL) De fase van dit molecuul. Het wordt nergens voor gebruikt, maar het is
+	 * handig om te hebben. <br>
+	 * (EN) The phase of this molecule. It is not used anywhere, but it is handy to
+	 * have.
+	 */
 	private Phase phase;
 
+	/**
+	 * (NL) De constructor om een instantie te maken. <br>
+	 * (EN) The constructor to make an instance.
+	 * 
+	 * @param elements
+	 *            (NL) De elementen of moleculen in deze molecuul. (EN) The elements
+	 *            or molecules in this molecule.
+	 * @param factor
+	 *            (NL) De coëfficiënt van deze molecuul. (EN) The coefficient of
+	 *            this molecule.
+	 * @param phase
+	 *            (NL) De fase van deze molecuul. (EN) The phase of this molecule.
+	 */
 	public Molecule(List<Element> elements, int factor, Phase phase) {
 		super(elementsToString(elements), factor);
 		this.elements = elements;
 		this.phase = phase;
 	}
 
+	/**
+	 * (NL) Getter voor de elementen en moleculen in deze molecuul. <br>
+	 * (EN) Getter for the elements and molecules in this molecule.
+	 * 
+	 * @return (NL) De elementen en moleculen. (EN) The elements and molecules.
+	 */
 	public List<Element> getElements() {
 		return elements;
 	}
 
+	/**
+	 * (NL) Kijkt of deze molecuul een bepaalde atoomsoort heeft. <br>
+	 * (EN) Checks if this molecule has a certain type of atom.
+	 * 
+	 * @param e
+	 *            (NL) De element om de soort van te checken. (EN) The element to
+	 *            check the type of.
+	 * @return (NL) 'true' als deze molecuul het atoomsoort heeft. (EN) 'true' if
+	 *         this molecule has the type of atom.
+	 */
 	public boolean hasElement(Element e) {
 		for (Element el : elements) {
 			if (el instanceof Molecule)
@@ -53,36 +102,40 @@ public class Molecule extends Element {
 		return false;
 	}
 
+	/**
+	 * (NL) Krijg de hoeveelheid van een bepaalde atoomsoort in deze molecuul. <br>
+	 * (EN) Get the amount of a certain atom type in this molecule.
+	 * 
+	 * @param e
+	 *            (NL) De element om de soort van te krijgen. (EN) The element to
+	 *            get the type of.
+	 * @return (NL) De hoeveelheid atomen. (EN) The amount of atoms.
+	 */
 	public int getElementFactor(Element e) {
 		int elementFactor = 0;
 		for (Element el : elements) {
 			if (el instanceof Molecule)
-				elementFactor += ((Molecule) el).getElementFactor(e);
+				elementFactor += ((Molecule) el).getElementFactor(e) * el.getFactor();
 			else if (el.getData().contentEquals(e.getData()))
 				elementFactor += el.getFactor();
 		}
 		return elementFactor;
 	}
 
-	public Element getFirstElement(String e) {
-		for (Element el : elements)
-			if (el.getData() == e)
-				return el;
-		return null;
-	}
-
-	public List<Element> getAllElements(String e) {
-		List<Element> allElements = new ArrayList<Element>();
-		for (Element el : elements)
-			if (el.getData() == e)
-				allElements.add(el);
-		return allElements;
-	}
-
+	/**
+	 * (NL) Getter voor de fase. <br>
+	 * (EN) Getter for the phase.
+	 * 
+	 * @return (NL) De fase. (EN) The phase.
+	 */
 	public Phase getPhase() {
 		return phase;
 	}
 
+	/**
+	 * (NL) Kijkt of dit object gelijk is aan het andere object. <br>
+	 * (EN) Checks if the object is equal to this object.
+	 */
 	@Override
 	public boolean equals(Object a) {
 		if (!(a instanceof Molecule))
@@ -90,6 +143,12 @@ public class Molecule extends Element {
 		return super.equals(a);
 	}
 
+	/**
+	 * (NL) Geef deze molecuul weer voor gebruik in HTMl. <br>
+	 * (EN) Represents this molecule for use in HTMl
+	 * 
+	 * @return (NL) Een string met HTML code. (EN) A string with HTML code.
+	 */
 	public String toHTMLString() {
 		StringBuilder sb = new StringBuilder();
 		if (getFactor() >= 0)
@@ -106,11 +165,25 @@ public class Molecule extends Element {
 		return sb.toString();
 	}
 
+	/**
+	 * (NL) Geeft deze molecuul weer als text. <br>
+	 * (EN) Represents this molecule as a string.
+	 */
 	@Override
 	public String toString() {
 		return "_" + getFactor() + "(" + getData() + (phase == Phase.NULL ? "" : ("(" + phase.getToken() + ")")) + ")";
 	}
 
+	/**
+	 * (NL) Zet de lijst met elementen om naar een string om door te geven naar de
+	 * constructor van de 'Element' klas. <br>
+	 * (EN) Convert the list of elements to a string to pass forward to the
+	 * constructor of the 'Element' class.
+	 * 
+	 * @param elements
+	 *            (NL) Lijst met elementen. (EN) List of elements.
+	 * @return (NL) De tekst weergave. (EN) The textual representation.
+	 */
 	private static String elementsToString(List<Element> elements) {
 		StringBuilder sb = new StringBuilder();
 		for (Element e : elements)
