@@ -34,7 +34,8 @@ public class Reaction {
 	private List<Element> leftTermElements;
 	private List<Element> rightTermElements;
 
-	public Reaction(List<Molecule> leftTerm, List<Molecule> rightTerm, List<Element> elements, List<Element> leftTermElements, List<Element> rightTermElements) {
+	public Reaction(List<Molecule> leftTerm, List<Molecule> rightTerm, List<Element> elements,
+			List<Element> leftTermElements, List<Element> rightTermElements) {
 		super();
 		this.leftTerm = leftTerm;
 		this.rightTerm = rightTerm;
@@ -66,56 +67,56 @@ public class Reaction {
 	public void setElements(List<Element> elements) {
 		this.elements = elements;
 	}
-	
-	public List<Element> getLeftTermElements(){
+
+	public List<Element> getLeftTermElements() {
 		return leftTermElements;
 	}
-	
-	public List<Element> getRightTermElements(){
+
+	public List<Element> getRightTermElements() {
 		return rightTermElements;
 	}
-	
+
 	public String toHTMLString() {
 		StringBuilder sb = new StringBuilder();
-		for(int i = 0; i < leftTerm.size(); i++) {
+		for (int i = 0; i < leftTerm.size(); i++) {
 			sb.append(leftTerm.get(i).toHTMLString());
-			if(i < leftTerm.size() - 1)
+			if (i < leftTerm.size() - 1)
 				sb.append(" + ");
 		}
 		sb.append(" = ");
-		for(int i = 0; i < rightTerm.size(); i++) {
+		for (int i = 0; i < rightTerm.size(); i++) {
 			sb.append(rightTerm.get(i).toHTMLString());
-			if(i < rightTerm.size() - 1)
+			if (i < rightTerm.size() - 1)
 				sb.append(" + ");
 		}
 		return sb.toString();
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for(int i = 0; i < leftTerm.size(); i++) {
+		for (int i = 0; i < leftTerm.size(); i++) {
 			sb.append(leftTerm.get(i).toString());
-			if(i < leftTerm.size() - 1)
+			if (i < leftTerm.size() - 1)
 				sb.append(" + ");
 		}
 		sb.append(" = ");
-		for(int i = 0; i < rightTerm.size(); i++) {
+		for (int i = 0; i < rightTerm.size(); i++) {
 			sb.append(rightTerm.get(i).toString());
-			if(i < rightTerm.size() - 1)
+			if (i < rightTerm.size() - 1)
 				sb.append(" + ");
 		}
-		
+
 		sb.append(" {elements:[");
-		for(Element e : elements)
+		for (Element e : elements)
 			sb.append(e.getData() + ": " + e.getFactor() + ", ");
 		sb.append("],");
 		sb.append(" left_term:[");
-		for(Element e : leftTermElements)
+		for (Element e : leftTermElements)
 			sb.append(e.getData() + ": " + e.getFactor() + ", ");
 		sb.append("],");
 		sb.append(" right_term:[");
-		for(Element e : rightTermElements)
+		for (Element e : rightTermElements)
 			sb.append(e.getData() + ": " + e.getFactor() + ", ");
 		sb.append("]}");
 		return sb.toString();

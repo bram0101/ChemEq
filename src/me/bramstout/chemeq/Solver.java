@@ -33,9 +33,9 @@ import java.util.Map.Entry;
 public class Solver {
 
 	public Reaction solve(Reaction reaction) {
-		//TODO: support for having already known coefficients
-		
+
 		List<Equation> equations = new ArrayList<Equation>();
+		Map<Integer, Double> solvedTerms = new HashMap<Integer, Double>();
 
 		for (Element e : reaction.getElements()) {
 			for (int i = 0; i < reaction.getLeftTerm().size(); i++) {
@@ -44,7 +44,10 @@ public class Solver {
 				if (!m.hasElement(e))
 					continue;
 
-				Term resultTerm = new Term(i, m.getFactor() * m.getElementFactor(e)); //TODO: remove the coefficient
+				if (m.getFactor() > 0)
+					solvedTerms.put(i, Double.valueOf(m.getFactor()));
+
+				Term resultTerm = new Term(i, m.getElementFactor(e));
 
 				List<Term> terms = new ArrayList<Term>();
 
@@ -52,13 +55,13 @@ public class Solver {
 					Molecule rm = reaction.getRightTerm().get(j);
 					if (rm.hasElement(e))
 						terms.add(new Term(reaction.getLeftTerm().size() + j,
-								rm.getFactor() * rm.getElementFactor(e) / resultTerm.getFactor())); //TODO: remove the coefficient
+								rm.getElementFactor(e) / resultTerm.getFactor()));
 				}
 
 				for (int k = 0; k < reaction.getLeftTerm().size(); k++) {
 					Molecule lm = reaction.getLeftTerm().get(k);
 					if (lm.hasElement(e) && k != i)
-						terms.add(new Term(k, lm.getFactor() * lm.getElementFactor(e) * -1 / resultTerm.getFactor())); //TODO: remove the coefficient
+						terms.add(new Term(k, lm.getElementFactor(e) * -1 / resultTerm.getFactor()));
 				}
 
 				resultTerm.setFactor(1);
@@ -82,21 +85,24 @@ public class Solver {
 				if (!m.hasElement(e))
 					continue;
 
-				Term resultTerm = new Term(reaction.getLeftTerm().size() + i, m.getFactor() * m.getElementFactor(e)); //TODO: remove the coefficient
+				if (m.getFactor() > 0)
+					solvedTerms.put(reaction.getLeftTerm().size() + i, Double.valueOf(m.getFactor()));
+
+				Term resultTerm = new Term(reaction.getLeftTerm().size() + i, m.getElementFactor(e));
 
 				List<Term> terms = new ArrayList<Term>();
 
 				for (int j = 0; j < reaction.getLeftTerm().size(); j++) {
 					Molecule lm = reaction.getLeftTerm().get(j);
 					if (lm.hasElement(e))
-						terms.add(new Term(j, lm.getFactor() * lm.getElementFactor(e) / resultTerm.getFactor())); //TODO: remove the coefficient
+						terms.add(new Term(j, lm.getElementFactor(e) / resultTerm.getFactor()));
 				}
 
 				for (int k = 0; k < reaction.getRightTerm().size(); k++) {
 					Molecule rm = reaction.getRightTerm().get(k);
 					if (rm.hasElement(e) && k != i)
 						terms.add(new Term(reaction.getLeftTerm().size() + k,
-								rm.getFactor() * rm.getElementFactor(e) * -1 / resultTerm.getFactor())); //TODO: remove the coefficient
+								rm.getElementFactor(e) * -1 / resultTerm.getFactor()));
 				}
 
 				resultTerm.setFactor(1);
@@ -115,24 +121,34 @@ public class Solver {
 			}
 		}
 
-		Map<Integer, Double> solvedTerms = new HashMap<Integer, Double>();
+		if (equations.size() == 0)
+			return reaction.copy();
 
-		boolean firstEq = true;
+		if (solvedTerms.isEmpty()) {
+			boolean firstEq = true;
+
+			for (int i = 0; i < equations.size(); i++) {
+				Equation eq = equations.get(i);
+				if (firstEq && eq.getTerms().size() == 1) {
+					solvedTerms.put(eq.getResultTerm().getId(), 1.0D);
+					firstEq = false;
+					break;
+				}
+			}
+
+			// We couldn't find an equation with just one term. Just going to set the first
+			// equation to 1.0.
+			if (firstEq) {
+				Equation eq = equations.get(0);
+				solvedTerms.put(eq.getResultTerm().getId(), 1.0D);
+			}
+		}
 
 		equationsLoop: for (int i = 0; i < equations.size(); i++) {
 			Equation eq = equations.get(i);
 
 			if (solvedTerms.containsKey(eq.getResultTerm().getId()))
 				continue;
-
-			// TODO: Put the following if statement before the equationsLoop.
-			// This would also help to check if we couldn't set a term to 1.0
-			if (firstEq && eq.getTerms().size() == 1) {
-				solvedTerms.put(eq.getResultTerm().getId(), 1.0D);
-				firstEq = false;
-				i = -1;
-				continue;
-			}
 
 			for (Term term : eq.getTerms())
 				if (!solvedTerms.containsKey(term.getId()))
@@ -162,16 +178,10 @@ public class Solver {
 			keyOrder.add(entry.getKey());
 		}
 
-		double gcd = 1.0 / MathUtil.getGCD(factors);
-		
-		for(int i = 0; i < ii; i++) {
-			factors[i] *= gcd;
-		}
-		
-		gcd = 1.0 / MathUtil.getGCD(factors);
+		double lcm = MathUtil.getLCM(factors);
 
 		for (Integer c : keyOrder) {
-			solvedTerms.put(c, solvedTerms.get(c) * gcd);
+			solvedTerms.put(c, solvedTerms.get(c) * lcm);
 		}
 
 		Reaction result = reaction.copy();

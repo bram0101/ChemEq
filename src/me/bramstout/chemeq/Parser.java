@@ -24,36 +24,18 @@
 
 package me.bramstout.chemeq;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-
 public class Parser {
 
-	private DocumentBuilder documentBuilder;
-
 	public Parser() {
-		try {
-			documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public Document parseHTML(String htmlSource) throws Exception {
-		ByteArrayInputStream input = new ByteArrayInputStream(htmlSource.getBytes("UTF-8"));
-		return documentBuilder.parse(input);
 	}
 
 	public Reaction parse(String s) throws IllegalArgumentException {
 		try {
-			StringIterator si = new StringIterator(" " + s.trim().replace('\t', ' ').replace('[', '(').replace(']', ')'));
+			StringIterator si = new StringIterator(
+					" " + s.trim().replace('\t', ' ').replace('[', '(').replace(']', ')'));
 
 			List<Molecule> leftTerm = parseTerm(si);
 

@@ -25,11 +25,11 @@
 package me.bramstout.chemeq;
 
 public class Term {
-	
+
 	private int id;
-	
+
 	private double factor;
-	
+
 	public Term(int id, double factor) {
 		this.id = id;
 		this.factor = factor;
@@ -42,22 +42,22 @@ public class Term {
 	public double getFactor() {
 		return factor;
 	}
-	
+
 	public void setFactor(double factor) {
 		this.factor = factor;
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
-		if(object == null)
+		if (object == null)
 			return false;
-		if(object == this)
+		if (object == this)
 			return true;
-		if(!(object instanceof Term))
+		if (!(object instanceof Term))
 			return false;
-		if(((Term)object).id == id && ((Term)object).factor == factor)
+		if (((Term) object).id == id && ((Term) object).factor == factor)
 			return true;
 		return false;
 	}
-	
+
 }

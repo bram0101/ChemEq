@@ -43,7 +43,7 @@ public class StringIterator {
 	public boolean hasNext() {
 		return index < size - 1;
 	}
-	
+
 	public int left() {
 		return size - index - 1;
 	}
@@ -51,7 +51,7 @@ public class StringIterator {
 	public void skip() {
 		index++;
 	}
-	
+
 	public void skip(int i) {
 		index += i;
 	}
@@ -92,28 +92,28 @@ public class StringIterator {
 		while (hasNext() && isWhitespace(peekNext()))
 			skip();
 	}
-	
+
 	public boolean isDigit(int codePoint) {
 		int subVal = codePoint - 8320;
 		return Character.isDigit(codePoint) || (subVal >= 0 && subVal < 10);
 	}
-	
+
 	public boolean isWhitespace(int codePoint) {
 		return Character.isWhitespace(codePoint);
 	}
-	
+
 	public boolean isLetter(int codePoint) {
 		return Character.isLetter(codePoint);
 	}
-	
+
 	public boolean isLowerCase(int codePoint) {
 		return Character.isLowerCase(codePoint);
 	}
-	
+
 	public boolean isUpperCase(int codePoint) {
 		return Character.isUpperCase(codePoint);
 	}
-	
+
 	public int getIntValue(int codePoint) {
 		int subVal = codePoint - 8320;
 		return (subVal >= 0 && subVal < 10) ? subVal : Character.getNumericValue(codePoint);

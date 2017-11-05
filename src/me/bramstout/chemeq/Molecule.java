@@ -52,15 +52,14 @@ public class Molecule extends Element {
 		}
 		return false;
 	}
-	
+
 	public int getElementFactor(Element e) {
 		int elementFactor = 0;
-		for(Element el : elements) {
+		for (Element el : elements) {
 			if (el instanceof Molecule)
 				elementFactor += ((Molecule) el).getElementFactor(e);
-			else
-				if(el.getData().contentEquals(e.getData()))
-					elementFactor += el.getFactor();
+			else if (el.getData().contentEquals(e.getData()))
+				elementFactor += el.getFactor();
 		}
 		return elementFactor;
 	}
@@ -90,15 +89,15 @@ public class Molecule extends Element {
 			return false;
 		return super.equals(a);
 	}
-	
+
 	public String toHTMLString() {
 		StringBuilder sb = new StringBuilder();
-		if(getFactor() >= 0)
+		if (getFactor() >= 0)
 			sb.append(getFactor());
 		sb.append("(");
 		for (Element e : elements)
 			sb.append(e.toHTMLString());
-		if(phase != Phase.NULL) {
+		if (phase != Phase.NULL) {
 			sb.append("(");
 			sb.append(phase.getToken());
 			sb.append(")");
