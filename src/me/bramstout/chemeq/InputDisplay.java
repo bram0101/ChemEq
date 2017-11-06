@@ -199,7 +199,7 @@ public class InputDisplay extends VBox {
 			Reaction reaction = parser.parse(value);
 			try {
 				Reaction r = solver.solve(reaction);
-				resultTextField.setText(r.toString()); //TODO: Convert the reaction to a nice readable format for display.
+				resultTextField.setText(DisplayUtil.reactionToString(r)); //TODO: Convert the reaction to a nice readable format for display.
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
