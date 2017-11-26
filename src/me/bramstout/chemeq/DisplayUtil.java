@@ -78,6 +78,17 @@ public class DisplayUtil {
 		for (Element el : m.getElements()) {
 			sb.append(elementToString(el));
 		}
+		
+		if(m.getCharge() != 0) {
+			if(m.getCharge() == 1)
+				sb.append(numberToSuperscript("+"));
+			else if(m.getCharge() > 1)
+				sb.append(numberToSuperscript("+" + Integer.toString(m.getCharge())));
+			else if(m.getCharge() == -1)
+				sb.append(numberToSuperscript("-"));
+			else if(m.getCharge() < -1)
+				sb.append(numberToSuperscript(Integer.toString(m.getCharge())));
+		}
 
 		return sb.toString();
 	}
@@ -132,6 +143,47 @@ public class DisplayUtil {
 			}
 		}
 		return sb.toString();
+	}
+	
+	/**
+	 * (NL) Geef de nummers in het String object weer als superscript unicode nummers.
+	 * <br>
+	 * (EN) Return the numbers in the String object as superscript unicode numbers.
+	 * 
+	 * @param a
+	 *            (NL) Het String object met nummers. (EN) The String object with
+	 *            numbers.
+	 * @return (NL) Een String object met subscript unicode nummers. (EN) A String
+	 *         object with subscript unicode numbers.
+	 */
+	public static String numberToSuperscript(String a) {
+		final String[] lookup = {"⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "⁺", "⁻"};
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < a.length(); i++) {
+			int codePoint = a.codePointAt(i);
+
+			if (Character.isDigit(codePoint)) {
+				int intVal = Character.getNumericValue(codePoint);
+				sb.append(lookup[intVal]);
+			}else if(codePoint == (int) '+') {
+				sb.append(lookup[10]);
+			}else if(codePoint == (int) '-') {
+				sb.append(lookup[11]);
+			}
+		}
+		return sb.toString();
+	}
+	
+	public static String getValueFromSuperscript(int codepoint) {
+		final String[] lookup = {"⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "⁺", "⁻"};
+		for(int i = 0; i < 10; i++)
+			if(lookup[i].codePointAt(0) == codepoint)
+				return i + "";
+		if(lookup[10].codePointAt(0) == codepoint)
+			return "+";
+		if(lookup[11].codePointAt(0) == codepoint)
+			return "-";
+		return null;
 	}
 
 }

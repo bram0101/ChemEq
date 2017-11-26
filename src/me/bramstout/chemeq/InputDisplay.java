@@ -56,9 +56,10 @@ public class InputDisplay extends VBox {
 	 * (EN) The solver class that solves the chemical reactions.
 	 */
 	private Solver solver;
-	
+
 	private TextField inputTextField;
 	private TextField resultTextField;
+	private Label errorLabel;
 
 	/**
 	 * (NL) Constructor om een invoor display te maken. <br>
@@ -67,24 +68,27 @@ public class InputDisplay extends VBox {
 	public InputDisplay() {
 		parser = new Parser();
 		solver = new Solver();
-		
+
 		setAlignment(Pos.CENTER);
-		
+
 		inputTextField = new TextField();
 		inputTextField.setFont(new Font(Font.getDefault().getFamily(), 16));
 		getChildren().add(inputTextField);
-		
+
 		Label label = new Label("Opgelost / Solved");
 		label.setPadding(new Insets(16, 0, 0, 0));
 		label.setFont(new Font(Font.getDefault().getFamily(), 16));
 		getChildren().add(label);
-		
+
 		resultTextField = new TextField();
 		resultTextField.setFont(new Font(Font.getDefault().getFamily(), 16));
 		resultTextField.setEditable(false);
 		resultTextField.setFocusTraversable(false);
 		getChildren().add(resultTextField);
-		
+
+		errorLabel = new Label("");
+		getChildren().add(errorLabel);
+
 		setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -107,41 +111,56 @@ public class InputDisplay extends VBox {
 				// (NL) Verander alle subscript getallen naar normale getallen.
 				// (EN) Change all subscript numbers to normal numbers.
 				String newValue = strValue;
+				boolean hasChanged = false;
 				for (int i = 0; i < strValue.length(); i++) {
 					int codePoint = strValue.codePointAt(i); // (NL) Om UTF-8 te ondersteunen gebruiken wij een integer
 																// om een karakter te vertegenwoordigen. (EN) To support
 																// UTF-8, we user an integer to represent a karakter.
 					int subVal = codePoint - 8320; // (NL) De subscript getallen beginnen bij 8320 als UTF-8 waarde.
 													// (EN) Subscript numbers start at 8320.
+					String superVal = DisplayUtil.getValueFromSuperscript(codePoint);
 					if (subVal >= 0 && subVal < 10) { // (NL) Kijk of het wel een getal is. Zoja, vervang het met een
 														// normaal getal. (EN) Check if it is a number. If so, replace
 														// it with a normal number.
 						newValue = newValue.substring(0, i) + subVal + newValue.substring(i + 1, newValue.length());
 					}
+					if (superVal != null) {
+						hasChanged = true;
+						newValue = newValue.substring(0, i) + superVal + newValue.substring(i + 1, newValue.length());
+					}
 				}
-				// (NL) Zoek enige indexes die naar subscript moeten worden verandert.
-				// (EN) Search for any indices that have to be converted to subscript.
-				boolean hasChanged = false;
+				// (NL) Zoek enige indexes die naar subscript moeten worden verandert, en enige
+				// ladingen die naar supscript moeten worden verandert.
+				// (EN) Search for any indices that have to be converted to subscript, and any
+				// charges that have to be converted to supscript.
 				String parsedVal = newValue;
 				// (NL) Kijk naar elke karakter in de invoer.
 				// (EN) Iterate over all characters in the input.
 				for (int i = 0; i < newValue.length(); i++) {
 					// (NL) Het moet wel een getal zijn.
 					// (EN) It has to be a number.
-					if (Character.isDigit(newValue.codePointAt(i))) {
+					if (Character.isDigit(newValue.codePointAt(i)) || newValue.codePointAt(i) == (int) '+'
+							|| newValue.codePointAt(i) == (int) '-') {
 						boolean isIndex = false;
+						boolean isCharge = false;
 						int intVal = 0;
-						int j = i - 1;
+						String chargeVal = null;
+						int j = i;
 						// (NL) Kijk steeds naar een karakter eerder om te kijken of dit een index is.
 						// (EN) Keep checking the previous character to see if this is an index.
 						while (j >= 0) {
 							int codePoint = newValue.codePointAt(j);
 							int subVal = codePoint - 8320;
+							String superVal = DisplayUtil.getValueFromSuperscript(codePoint);
+							if (superVal != null)
+								codePoint = superVal.codePointAt(0);
 							// (NL) Als het een getal is, dan kijken wij naar de karakter daarvoor. Is het
 							// een letter of ')', dan is het een index. Vinden wij iets anders, dan is het
-							// geen index.
+							// geen index. Als wij een '+' of '-' vinden, dan kijken wij of het een lading
+							// is.
 							// (EN) If it is a number, check the karakter before that. If it is a letter of
 							// ')', then it is an index. If we find something else, it is not an index.
+							// If we find a '+' or '-', then we check if it is a charge.
 							if (Character.isDigit(codePoint) || Character.isLetter(codePoint)
 									|| (subVal >= 0 && subVal < 10) || codePoint == (int) ')') {
 								if (Character.isDigit(codePoint) || (subVal >= 0 && subVal < 10)) {
@@ -152,6 +171,64 @@ public class InputDisplay extends VBox {
 									intVal = Character.getNumericValue(newValue.codePointAt(i));
 									break;
 								}
+							} else if (codePoint == (int) '+' || codePoint == (int) '-') {
+								if(j > 0) {
+									int codeP = newValue.codePointAt(j - 1);
+									int subV = codeP - 8320;
+									String superV = DisplayUtil.getValueFromSuperscript(codeP);
+									if (superV != null)
+										codeP = superV.codePointAt(0);
+									if(codeP == (int) '+' || codeP == (int) '-' || Character.isWhitespace(codeP))
+										break;
+									if(Character.isDigit(codeP) || (subV >= 0 && subV < 10)) {
+										int k = j - 1;
+										boolean b = false;
+										while(k >= 0) {
+											int cP = newValue.codePointAt(k);
+											int sbV = cP - 8320;
+											String supV = DisplayUtil.getValueFromSuperscript(cP);
+											if (supV != null)
+												cP = supV.codePointAt(0);
+											if(Character.isDigit(cP) || (sbV >= 0 && sbV < 10)) {
+												k--;
+												continue;
+											}
+											if(cP == (int) '+' || cP == (int) '-')
+												b = true;
+											break;
+										}
+										if(b)
+											break;
+									}
+									//TODO: If there are any numbers infront, check if there is a '+' or '-' before that.
+								}
+								int k = i + 1;
+								// (NL) We zeggen alvast dat het een lading is, en dan kunnen wij het in de
+								// while loop weer terug zetten. Voor het geval dat de lading het laatste
+								// karakter is.
+								// (EN) We already set the isCharge to true, so that we can set it to false in
+								// the while loop. In case the charge is the last character.
+								isCharge = true;
+								while (k < newValue.length()) {
+									int codeP = newValue.codePointAt(k);
+									superVal = DisplayUtil.getValueFromSuperscript(codeP);
+									if (superVal != null)
+										codeP = superVal.codePointAt(0);
+									subVal = codeP - 8320;
+									if (Character.isDigit(codeP) || (subVal >= 0 && subVal < 10)) {
+										k++;
+										continue;
+									}
+									if (Character.isWhitespace(codeP) || codeP == (int) '+' || codeP == (int) '-'
+											|| codeP == (int) '=')
+										break;
+									isCharge = false;
+									break;
+								}
+								if (isCharge) {
+									chargeVal = DisplayUtil.numberToSuperscript(newValue.substring(i, i + 1));
+								}
+								break;
 							} else {
 								break;
 							}
@@ -163,6 +240,11 @@ public class InputDisplay extends VBox {
 						if (isIndex) {
 							hasChanged = true;
 							parsedVal = parsedVal.substring(0, i) + new String(new int[] { 8320 + intVal }, 0, 1)
+									+ parsedVal.substring(i + 1, parsedVal.length());
+						}
+						if (isCharge) {
+							hasChanged = true;
+							parsedVal = parsedVal.substring(0, i) + chargeVal
 									+ parsedVal.substring(i + 1, parsedVal.length());
 						}
 					}
@@ -195,16 +277,18 @@ public class InputDisplay extends VBox {
 	public void parse(String value) {
 		// (NL) Parse de invoer. Doe hetzelfde kwa oplossen en geef het resultaat weer.
 		// (EN) Parse the input. Do the same for solving it and display it.
+		errorLabel.setText("");
 		try {
 			Reaction reaction = parser.parse(value);
 			try {
 				Reaction r = solver.solve(reaction);
-				resultTextField.setText(DisplayUtil.reactionToString(r)); //TODO: Convert the reaction to a nice readable format for display.
+				resultTextField.setText(DisplayUtil.reactionToString(r));
+				//resultTextField.setText(reaction.toString());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		} catch (Exception ex) {
-			getChildren().add(new Label("ERR: Could not parse!"));
+			errorLabel.setText("ERR: Could not parse!");
 			ex.printStackTrace();
 		}
 	}

@@ -118,5 +118,15 @@ public class Element {
 			return true;
 		return false;
 	}
+	
+	/**
+	 * (NL) Maak een kopie van dit element. <br>
+	 * (EN) Make a copy of this element.
+	 * 
+	 * @return (NL) Een kopie. (EN) A copy.
+	 */
+	public Element copy() {
+		return new Element(data + "", factor);
+	}
 
 }

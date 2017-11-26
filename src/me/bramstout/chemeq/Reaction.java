@@ -24,6 +24,7 @@
 
 package me.bramstout.chemeq;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -224,6 +225,21 @@ public class Reaction {
 	 * @return (NL) Een kopie. (EN) A copy.
 	 */
 	public Reaction copy() {
+		List<Molecule> leftTerm = new ArrayList<Molecule>();
+		for(int i = 0; i < this.leftTerm.size(); i++)
+			leftTerm.add(this.leftTerm.get(i).copy());
+		List<Molecule> rightTerm = new ArrayList<Molecule>();
+		for(int i = 0; i < this.rightTerm.size(); i++)
+			rightTerm.add(this.rightTerm.get(i).copy());
+		List<Element> elements = new ArrayList<Element>();
+		for(int i = 0; i < this.elements.size(); i++)
+			elements.add(this.elements.get(i).copy());
+		List<Element> leftTermElements = new ArrayList<Element>();
+		for(int i = 0; i < this.leftTermElements.size(); i++)
+			leftTermElements.add(this.leftTermElements.get(i).copy());
+		List<Element> rightTermElements = new ArrayList<Element>();
+		for(int i = 0; i < this.rightTermElements.size(); i++)
+			rightTermElements.add(this.rightTermElements.get(i).copy());
 		return new Reaction(leftTerm, rightTerm, elements, leftTermElements, rightTermElements);
 	}
 

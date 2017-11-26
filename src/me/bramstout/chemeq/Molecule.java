@@ -24,6 +24,7 @@
 
 package me.bramstout.chemeq;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,6 +54,12 @@ public class Molecule extends Element {
 	private Phase phase;
 
 	/**
+	 * (NL) De lading van dit molecuul.<br>
+	 * (EN) The charge of this molecule.
+	 */
+	private int charge;
+
+	/**
 	 * (NL) De constructor om een instantie te maken. <br>
 	 * (EN) The constructor to make an instance.
 	 * 
@@ -65,10 +72,11 @@ public class Molecule extends Element {
 	 * @param phase
 	 *            (NL) De fase van deze molecuul. (EN) The phase of this molecule.
 	 */
-	public Molecule(List<Element> elements, int factor, Phase phase) {
+	public Molecule(List<Element> elements, int factor, Phase phase, int charge) {
 		super(elementsToString(elements), factor);
 		this.elements = elements;
 		this.phase = phase;
+		this.charge = charge;
 	}
 
 	/**
@@ -133,6 +141,16 @@ public class Molecule extends Element {
 	}
 
 	/**
+	 * (NL) Getter voor de lading. <br>
+	 * (EN) Getter for the charge
+	 * 
+	 * @return (NL) De lading. (EN) The charge.
+	 */
+	public int getCharge() {
+		return charge;
+	}
+
+	/**
 	 * (NL) Kijkt of dit object gelijk is aan het andere object. <br>
 	 * (EN) Checks if the object is equal to this object.
 	 */
@@ -171,7 +189,8 @@ public class Molecule extends Element {
 	 */
 	@Override
 	public String toString() {
-		return "_" + getFactor() + "(" + getData() + (phase == Phase.NULL ? "" : ("(" + phase.getToken() + ")")) + ")";
+		return "_" + getFactor() + "(" + getData() + (phase == Phase.NULL ? "" : ("(" + phase.getToken() + ")")) + ")" + 
+					(charge != 0 ? (charge > 0 ? ("+" + charge) : ("-" + (charge * -1))) : "");
 	}
 
 	/**
@@ -189,6 +208,19 @@ public class Molecule extends Element {
 		for (Element e : elements)
 			sb.append(e.toString());
 		return sb.toString();
+	}
+	
+	/**
+	 * (NL) Maak een kopie van dit molecuul. <br>
+	 * (EN) Make a copy of this molecule.
+	 * 
+	 * @return (NL) Een kopie. (EN) A copy.
+	 */
+	public Molecule copy() {
+		List<Element> elements = new ArrayList<Element>();
+		for(int i = 0; i < this.elements.size(); i++)
+			elements.add(this.elements.get(i).copy());
+		return new Molecule(elements, getFactor(), phase, charge);
 	}
 
 }

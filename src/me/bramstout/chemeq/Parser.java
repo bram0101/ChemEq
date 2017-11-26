@@ -166,12 +166,13 @@ public class Parser {
 		List<Element> elements = new ArrayList<Element>();
 		int factor = -1;
 		Phase phase = Phase.NULL;
+		int charge = 0;
 
 		// (NL) Als wij aan het einde van de invoer zitten, dan geven wij gewoon een
 		// lege molecuul weer.
 		// (EN) If we are at the end of the input, we just return an empty molecule.
 		if (!si.hasNext())
-			return new Molecule(elements, factor, Phase.NULL);
+			return new Molecule(elements, factor, Phase.NULL, 0);
 
 		// (NL) Kijk of het begint met een cijfer, zoja, dan is het een coëfficiënt en
 		// lezen wij de.
@@ -223,6 +224,55 @@ public class Parser {
 				// (NL) Als het begint met een letter, dan is het een element en parsen wij die.
 				// (EN) If it starts with a letter, it is an element and we parse it.
 				elements.add(parseElement(si));
+			} else if (si.peekNext() == (int) '+' || si.peekNext() == (int) '-') {
+				// (NL) Wij hebben een '+' of '-' gevonden, nu moeten wij kijken of het een
+				// lading aangeeft of een nieuw molecuul.
+				// (EN) We encountered a '+' or '-', we now need to check whether it indicates a
+				// charge or a new molecule.
+				if (si.left() <= 1 || si.isWhitespace(si.peek(2)) || si.peek(2) == (int) '+' || si.peek(2) == (int) '-' || si.peek(2) == (int) '=') {
+					// (NL) Erna is een spatie of nog een '+', dus het moet een lading zijn. Dus wij
+					// kijken of het een '+' was, dan zetten wij de lading naar 1, en anders was het
+					// een '-' en is de lading -1.
+					// (EN) After it, there is a whitespace or another '+', so it has to be a
+					// charge. So we check if it was a '+', if so we set the charge to 1. Else, it
+					// was a '-' and the charge is -1.
+					charge = si.peekNext() == (int) '+' ? 1 : -1;
+					si.skip();
+					// (NL) Zorg ervoor om te stoppen met het molecuul te lezen aangezien dit het
+					// einde is.
+					// (EN) Make sure to stop with reading the molecule, as this is the end.
+					break;
+				} else if (si.isDigit(si.peek(2))) {
+					// (NL) Na de '+' of '-' zit nog een cijfer is, dus is het de lading, of een
+					// coëfficiënt van een nieuw molecuul. Als na de cijfers een spatie of '+' zit,
+					// dan is het een lading.
+					// (EN) After the '+' or '-' there is another number, so it is either the
+					// charge, or the coefficient of a new molecule. If after the numbers there is a
+					// whitespace or '+', then if is the charge.
+					int i = 2;
+					StringBuilder sb = new StringBuilder();
+					while (si.left() >= i && si.isDigit(si.peek(i))) {
+						sb.append(si.getIntValue(si.peek(i++)));
+					}
+					if (si.left() < i || si.isWhitespace(si.peek(i)) || si.peek(i) == (int) '+' || si.peek(i) == (int) '-' || si.peek(i) == (int) '=') {
+						// (NL) Het is een lading.
+						// (EN) It is a charge.
+						charge = Integer.parseInt(sb.toString()) * (si.peekNext() == (int) '+' ? 1 : -1);
+						si.skip(i - 1);
+						// (NL) Zorg ervoor om te stoppen met het molecuul te lezen aangezien dit het
+						// einde is.
+						// (EN) Make sure to stop with reading the molecule, as this is the end.
+						break;
+					} else {
+						// (NL) Het was geen lading, en het molecuul is dus al gestopt.
+						// (EN) It was not a charge, and thus the molecule has already stopped.
+						break;
+					}
+				} else {
+					// (NL) Het was geen lading, en het molecuul is dus al gestopt.
+					// (EN) It was not a charge, and thus the molecule has already stopped.
+					break;
+				}
 			} else {
 				// (NL) Wij hebben iets anders gevonden, dus is de molecuul voorbij.
 				// (EN) We encountered something different, so the molecule is over.
@@ -232,7 +282,7 @@ public class Parser {
 
 		// (NL) Geef de nieuwe molecuul als object terug.
 		// (EN) Return the new molecule as an object.
-		return new Molecule(elements, factor, phase);
+		return new Molecule(elements, factor, phase, charge);
 	}
 
 	/**

@@ -106,12 +106,12 @@ public enum Phase {
 						i++;
 						break;
 					}
-					sb.append(si.peek(i++));
+					sb.append((char) si.peek(i++));
 				}
 				for (Phase p : values()) {
 					for (String key : p.keys) {
-						if (key.toLowerCase().contentEquals(sb.toString().toLowerCase())) {
-							si.skip(i);
+						if (key.contentEquals(sb.toString())) {
+							si.skip(i - 1);
 							return p;
 						}
 					}
