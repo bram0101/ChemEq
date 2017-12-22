@@ -291,6 +291,104 @@ public class Solver {
 			i = -1;
 		}
 
+		// (NL) Bij sommige reacties zijn er nog een paar moleculen die niet opgelost
+		// zijn. Dat kan bijvoorbeeld moleculen zijn die eigenlijk niet meedoen aan de
+		// reactie, of moleculen die enkel nodig zijn om elektronen op te nemen of af te
+		// geven. Wat deze moleculen in gemeen hebben, is dat er maar één aan beide
+		// kanten staan. Dus moeten wij kijken of er nog enige moleculen zijn die niet
+		// opgelost
+		// zijn.
+		// (EN) With some reactions, there are a few molecules that are not solved yet.
+		// The molecules could be molecules that do not actually contribute to the
+		// reaction, of molecules that are only needed to take or give elektrons. What
+		// these molecules have in common, is that on both sides there is only one of
+		// those molecules.
+		for (int i = 0; i < equations.size(); i++) {
+			Equation eq = equations.get(i);
+
+			// (NL) Als de molecuul al is opgelost, dan slaan wij deze over.
+			// (EN) If the molecule is already solvest, we just skip this one.
+			if (solvedTerms.containsKey(eq.getResultTerm().getId()))
+				continue;
+
+			// (NL) Wij willen juist de moleculen waar er maar één aan beide kanten
+			// voorkomen. Anders slaan wij ze over. Zo een vergelijking ziet er dan uit als
+			// 'a = c'. Dus er is maar één term.
+			// (EN) We only want the molecules that occur once on both sides. Else we skip
+			// them. An equation like that looks like 'a = c', so there is only one term.
+			if (eq.getTerms().size() != 1)
+				continue;
+
+			// (NL) Als de molecuul dezelfde lading heeft, dan kan de molecuul net zo goed
+			// weg gaan, en kunnen we het elke coëfficiënt geven die we willen. Wij zetten
+			// het dan gewoon naar één. Als het een andere lading heeft, dan speelt het mee
+			// met de rest van de vergelijking en hangt de coëfficiënt af van de rest en
+			// moeten wij die oplossen.
+			// (EN) If the molecule has the same charge, the molecules can be removed
+			// without any changes to the rest. So we can just set the coefficient to one.
+			// If the charges differ, we need to solve the coefficients as they are affected
+			// by the rest.
+			int chargeA = eq.getResultTerm().getId() < reaction.getLeftTerm().size()
+					? reaction.getLeftTerm().get(eq.getResultTerm().getId()).getCharge()
+					: reaction.getRightTerm().get(eq.getResultTerm().getId() - reaction.getLeftTerm().size())
+							.getCharge();
+			int chargeB = eq.getTerms().get(0).getId() < reaction.getLeftTerm().size()
+					? reaction.getLeftTerm().get(eq.getTerms().get(0).getId()).getCharge()
+					: reaction.getRightTerm().get(eq.getTerms().get(0).getId() - reaction.getLeftTerm().size())
+							.getCharge();
+			if (chargeA == chargeB) {
+				// (NL) De ladingen zijn hetzelfde, dus de coëfficiënten worden één. Wij doen
+				// ook alvast de andere term.
+				// (EN) De charges are the same, so the coefficients will become one. The also
+				// set the other term.
+				solvedTerms.put(eq.getResultTerm().getId(), 1.0);
+				solvedTerms.put(eq.getTerms().get(0).getId(), 1.0);
+			} else {
+				// (NL) De ladingen zijn anders. Uiteindelijk moeten de ladingen aan beide
+				// kanten gelijk zijn. De volgende formule wordt gebruikt: "factor(chargeA -
+				// chargeB) = chargesRight - chargesLeft".
+				// (EN) The charges differ. In the end, the charges on both sides need to equal.
+				// De following formula will be used: "factor(chargeA - chargeB) = chargesRight
+				// - chargesLeft".
+
+				// (NL) Wij willen alle ladingen links optellen. De twee moleculen die wij juist
+				// willen weten slaan we over.
+				// (EN) We want to add up all the charges on the left side. The two molecules we
+				// want to solve, we skip.
+				double chargesLeft = 0;
+				for (int j = 0; j < reaction.getLeftTerm().size(); j++) {
+					if (j == eq.getResultTerm().getId() || j == eq.getTerms().get(0).getId()
+							|| !solvedTerms.containsKey(j))
+						continue;
+					Molecule lm = reaction.getLeftTerm().get(j);
+					chargesLeft += lm.getCharge() * solvedTerms.get(j).doubleValue();
+				}
+				// (NL) Nu doen wij hetzelfde voor de rechter kant.
+				// (EN) Now we do the same for the right side.
+				double chargesRight = 0;
+				for (int k = 0; k < reaction.getRightTerm().size(); k++) {
+					if (k == eq.getResultTerm().getId() || k == eq.getTerms().get(0).getId()
+							|| !solvedTerms.containsKey(reaction.getLeftTerm().size() + k))
+						continue;
+					Molecule lm = reaction.getRightTerm().get(k);
+					chargesRight += lm.getCharge() * solvedTerms.get(reaction.getLeftTerm().size() + k).doubleValue();
+				}
+				// (NL) Nu hoeven wij enkel maar de formule in te vullen. We delen ook door
+				// (chargeA - chargeB) om de factor te krijgen, wat de coëfficiënt is. We hoeven
+				// geen zorgen te maken over delen door nul. chargeA en chargeB zijn niet
+				// gelijk, dus kan het niet nul worden.
+				// (EN) Now we just have to fill in the formula. We divide by (chargeA -
+				// chargeB) to get the factor, which is the coefficient. We do not have to worry
+				// about a divide by zero, as we now chargeA and chargeB are not the same and
+				// thus cannot be zero.
+				double chargeResult = (chargesRight - chargesLeft) / ((double) (chargeA - chargeB));
+				// (NL) Als laatste slaan wij het op.
+				// (EN) Finally we save the results.
+				solvedTerms.put(eq.getResultTerm().getId(), chargeResult);
+				solvedTerms.put(eq.getTerms().get(0).getId(), chargeResult);
+			}
+		}
+
 		// (NL) Wij willen nu de laagste gemeenschappelijke veelvoud berekenen van alle
 		// getallen. Eerst moeten wij alle coëfficiënten die wij weten opslaan naar een
 		// lijst zodat wij het kunnen gebruiken in de hulp klas. Wij

@@ -200,7 +200,6 @@ public class InputDisplay extends VBox {
 										if(b)
 											break;
 									}
-									//TODO: If there are any numbers infront, check if there is a '+' or '-' before that.
 								}
 								int k = i + 1;
 								// (NL) We zeggen alvast dat het een lading is, en dan kunnen wij het in de
