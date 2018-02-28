@@ -24,6 +24,8 @@
 
 package me.bramstout.chemeq;
 
+import java.util.List;
+
 /**
  * (NL) Een hulp klas om alles mooi op het beeldscherm te kunnen weergeven. <br>
  * (EN) An utility class to display everything nicely on the monitor.
@@ -186,6 +188,23 @@ public class DisplayUtil {
 		if(lookup[11].codePointAt(0) == codepoint)
 			return "-";
 		return null;
+	}
+	
+	public static void getAtoms(List<Molecule> term, StringBuilder sb) {
+		for(Molecule mol : term) {
+			for(Element el : mol.getElements()) {
+				fillStringBuilderAtoms(el, sb);
+			}
+		}
+	}
+	
+	public static void fillStringBuilderAtoms(Element e, StringBuilder sb) {
+		if(e instanceof Molecule) {
+			for(Element el : ((Molecule)e).getElements())
+				fillStringBuilderAtoms(el, sb);
+			return;
+		}
+		sb.append(e.getData() + ": " + e.getFactor() + ", ");
 	}
 
 }

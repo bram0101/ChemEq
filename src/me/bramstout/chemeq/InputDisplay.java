@@ -59,6 +59,7 @@ public class InputDisplay extends VBox {
 
 	private TextField inputTextField;
 	private TextField resultTextField;
+	private Label reactionInfoLabel;
 	private Label errorLabel;
 
 	/**
@@ -70,7 +71,7 @@ public class InputDisplay extends VBox {
 		solver = new Solver();
 
 		setAlignment(Pos.CENTER);
-
+		
 		inputTextField = new TextField();
 		inputTextField.setFont(new Font(Font.getDefault().getFamily(), 16));
 		getChildren().add(inputTextField);
@@ -85,7 +86,10 @@ public class InputDisplay extends VBox {
 		resultTextField.setEditable(false);
 		resultTextField.setFocusTraversable(false);
 		getChildren().add(resultTextField);
-
+		
+		reactionInfoLabel = new Label("Atomen / Atoms: ");
+		getChildren().add(reactionInfoLabel);
+		
 		errorLabel = new Label("");
 		getChildren().add(errorLabel);
 
@@ -98,6 +102,20 @@ public class InputDisplay extends VBox {
 				inputTextField.end();
 			}
 
+		});
+		
+		// (NL) Als je op het antwoordt klikt, dan selecteert hij alvast alles.
+		// (EN) If you click on the answer, it is going to select everything.
+		resultTextField.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				Platform.runLater(()->{
+					resultTextField.selectAll();
+					resultTextField.copy();
+				});
+			}
+			
 		});
 
 		// (NL) Kijk of the invoer veranderd. Zoja, dan de indexes naar een kleiner
@@ -282,7 +300,12 @@ public class InputDisplay extends VBox {
 			try {
 				Reaction r = solver.solve(reaction);
 				resultTextField.setText(DisplayUtil.reactionToString(r));
-				//resultTextField.setText(reaction.toString());
+				
+				StringBuilder sb = new StringBuilder();
+				DisplayUtil.getAtoms(reaction.getLeftTerm(), sb);
+				
+				reactionInfoLabel.setText("Atomen / Atoms: " + sb.substring(0, sb.length() - 2));
+				
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

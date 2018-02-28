@@ -29,7 +29,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
@@ -49,15 +53,40 @@ public class App extends Application {
 	 */
 	private Scene mainWindow;
 	/**
+	 * (NL) Het hoogste niveau van de scene. <br>
+	 * (EN) The root of the scene.
+	 */
+	private StackPane root;
+	
+	/**
 	 * (NL) De hoofd layout. <br>
 	 * (EN) The head layout.
 	 */
-	private BorderPane root;
+	private BorderPane rootLayout;
+	
 	/**
 	 * (NL) De groep die de data van de parser en solver weergeeft. <br>
 	 * (EN) The group that displays the data of the parser and solver.
 	 */
 	private InputDisplay inputDisplay;
+	
+	/**
+	 * (NL) Een object om het grote logo te laten zien. <br>
+	 * (EN) An object to show the big logo.
+	 */
+	private ImageView logoView;
+	
+	/**
+	 * (NL) Een 'Over' knop. <br>
+	 * (EN) An 'About' button.
+	 */
+	private Button aboutButton;
+	
+	/**
+	 * (NL) Het 'Over' venster. <br>
+	 * (EN) The 'About' window.
+	 */
+	private AboutWindow aboutWindow;
 
 	@Override
 	/**
@@ -68,10 +97,24 @@ public class App extends Application {
 		// (NL) De standaard grootte van het venster.
 		// (EN) The default size of the window.
 		final double windowWidth = 1280, windowHeight = 720;
+		
+		arg0.getIcons().add(new Image(App.class.getClassLoader().getResourceAsStream("icon_64.png")));
 
 		// (NL) Maak de UI.
 		// (EN) Create the UI.
-		root = new BorderPane();
+		root = new StackPane();
+		
+		BorderPane logoViewBorderPane = new BorderPane();
+		logoView = new ImageView();
+		logoView.setFitWidth(320);
+		logoView.setPreserveRatio(true);
+		logoView.setImage(new Image(App.class.getClassLoader().getResourceAsStream("icon_large.png")));
+		logoViewBorderPane.setPadding(new Insets(8));
+		logoViewBorderPane.setTop(logoView);
+		
+		root.getChildren().add(logoViewBorderPane);
+		
+		rootLayout = new BorderPane();
 
 		inputDisplay = new InputDisplay();
 		inputDisplay.maxWidthProperty().bind(root.widthProperty());
@@ -87,19 +130,35 @@ public class App extends Application {
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number oldVal, Number newVal) {
 				inputDisplay.setPadding(
-						new Insets(newVal.doubleValue() * 0.16666666 * 0.5, newVal.doubleValue() * 0.16666666,
+						new Insets(Math.max(newVal.doubleValue() * 0.16666666 * 0.5, 156), newVal.doubleValue() * 0.16666666,
 								newVal.doubleValue() * 0.16666666 * 0.5, newVal.doubleValue() * 0.16666666));
 			}
 
 		});
 
-		root.setTop(inputDisplay);
+		rootLayout.setTop(inputDisplay);
+		
+		root.getChildren().add(rootLayout);
+		
+		aboutWindow = new AboutWindow(arg0);
+		
+		BorderPane aboutButtonBorderPane = new BorderPane();
+		aboutButtonBorderPane.setPickOnBounds(false);
+		aboutButton = new Button("Over / About");
+		aboutButton.setOnAction((event)->{
+			aboutWindow.show();
+		});
+		aboutButtonBorderPane.setPadding(new Insets(8));
+		aboutButtonBorderPane.setBottom(aboutButton);
+		
+		root.getChildren().add(aboutButtonBorderPane);
 
 		// (NL) Maak het venster aan en geef het weer.
 		// (EN) Create and show the window.
 		mainWindow = new Scene(root, windowWidth, windowHeight);
 
 		arg0.setTitle("ChemEq " + Main.VERSION);
+		arg0.setMinWidth(512);
 		arg0.setScene(mainWindow);
 		arg0.show();
 	}
