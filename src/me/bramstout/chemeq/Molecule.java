@@ -223,4 +223,12 @@ public class Molecule extends Element {
 		return new Molecule(elements, getFactor(), phase, charge);
 	}
 
+	public double getMass() {
+		double mass = 0;
+		for(Element e : elements) {
+			mass += e.getMass();
+		}
+		return mass;
+	}
+
 }

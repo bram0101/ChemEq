@@ -61,12 +61,14 @@ public class InputDisplay extends VBox {
 	private TextField resultTextField;
 	private Label reactionInfoLabel;
 	private Label errorLabel;
+	private Barrel barrel;
 
 	/**
 	 * (NL) Constructor om een invoor display te maken. <br>
 	 * (EN) Constructor to create an input display.
 	 */
-	public InputDisplay() {
+	public InputDisplay(Barrel barrel) {
+		this.barrel = barrel;
 		parser = new Parser();
 		solver = new Solver();
 
@@ -282,6 +284,8 @@ public class InputDisplay extends VBox {
 			}
 
 		});
+		
+		inputTextField.setText("CaCl2 + AgNO3 = AgCl + Ca(NO3)2");
 	}
 
 	/**
@@ -302,9 +306,11 @@ public class InputDisplay extends VBox {
 				resultTextField.setText(DisplayUtil.reactionToString(r));
 				
 				StringBuilder sb = new StringBuilder();
-				DisplayUtil.getAtoms(reaction.getLeftTerm(), sb);
+				DisplayUtil.getAtoms(r.getLeftTerm(), sb);
 				
 				reactionInfoLabel.setText("Atomen / Atoms: " + sb.substring(0, sb.length() - 2));
+				
+				barrel.update(r);;
 				
 			} catch (Exception ex) {
 				ex.printStackTrace();

@@ -128,5 +128,17 @@ public class Element {
 	public Element copy() {
 		return new Element(data + "", factor);
 	}
+	
+	/**
+	 * (NL) Krijg de massa in atomaire eenheid van deze element. <br>
+	 * (EN) Get the mass in atomic units of this element.
+	 * @return
+	 */
+	public double getMass() {
+		AtomLookup al = AtomLookup.getFromName(data);
+		if(al == null)
+			return 0;
+		return al.getMass() * factor;
+	}
 
 }

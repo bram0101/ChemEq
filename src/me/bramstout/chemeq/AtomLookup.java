@@ -25,6 +25,7 @@
 package me.bramstout.chemeq;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * (NL) Het periodiek systeem. <br>
@@ -66,9 +67,10 @@ public enum AtomLookup {
 		return mass;
 	}
 	
-	private static HashMap<String, AtomLookup> name2Atom;
+	private static Map<String, AtomLookup> name2Atom;
 	
 	static {
+		name2Atom = new HashMap<String, AtomLookup>();
 		for(AtomLookup atom : values()){
 			name2Atom.put(atom.sid, atom);
 		}

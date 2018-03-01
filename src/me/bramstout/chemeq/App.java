@@ -34,6 +34,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
@@ -62,13 +63,19 @@ public class App extends Application {
 	 * (NL) De hoofd layout. <br>
 	 * (EN) The head layout.
 	 */
-	private BorderPane rootLayout;
+	private VBox rootLayout;
 	
 	/**
 	 * (NL) De groep die de data van de parser en solver weergeeft. <br>
 	 * (EN) The group that displays the data of the parser and solver.
 	 */
 	private InputDisplay inputDisplay;
+	
+	/**
+	 * (NL) Het mengvat. <br>
+	 * (EN) Calculates masses of the reaction.
+	 */
+	private Barrel barrel;
 	
 	/**
 	 * (NL) Een object om het grote logo te laten zien. <br>
@@ -114,13 +121,22 @@ public class App extends Application {
 		
 		root.getChildren().add(logoViewBorderPane);
 		
-		rootLayout = new BorderPane();
-
-		inputDisplay = new InputDisplay();
+		rootLayout = new VBox();
+		
+		barrel = new Barrel();
+		
+		inputDisplay = new InputDisplay(barrel);
 		inputDisplay.maxWidthProperty().bind(root.widthProperty());
 		inputDisplay.minWidthProperty().bind(root.widthProperty());
 		inputDisplay.setPadding(new Insets(windowWidth * 0.16666666, windowWidth * 0.16666666, windowWidth * 0.16666666,
 				windowWidth * 0.16666666));
+		
+		barrel.maxWidthProperty().bind(root.widthProperty());
+		barrel.minWidthProperty().bind(root.widthProperty());
+		
+		rootLayout.getChildren().addAll(inputDisplay, barrel);
+		
+		
 		// (NL) Normaal van je de klas Property gebruiken en het binden aan de
 		// 'padding'. Dat kan niet bij 'padding', dus doe ik het zo.
 		// (EN) Normally you can use the Property class and bind it to the padding.
@@ -131,12 +147,10 @@ public class App extends Application {
 			public void changed(ObservableValue<? extends Number> arg0, Number oldVal, Number newVal) {
 				inputDisplay.setPadding(
 						new Insets(Math.max(newVal.doubleValue() * 0.16666666 * 0.5, 156), newVal.doubleValue() * 0.16666666,
-								newVal.doubleValue() * 0.16666666 * 0.5, newVal.doubleValue() * 0.16666666));
+								newVal.doubleValue() * 0.16666666 * 0.25, newVal.doubleValue() * 0.16666666));
 			}
 
 		});
-
-		rootLayout.setTop(inputDisplay);
 		
 		root.getChildren().add(rootLayout);
 		
@@ -159,6 +173,7 @@ public class App extends Application {
 
 		arg0.setTitle("ChemEq " + Main.VERSION);
 		arg0.setMinWidth(512);
+		arg0.setMinHeight(512);
 		arg0.setScene(mainWindow);
 		arg0.show();
 	}
