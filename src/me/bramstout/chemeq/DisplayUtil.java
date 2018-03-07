@@ -72,12 +72,29 @@ public class DisplayUtil {
 	 * @return (NL) Een tekst weergave. (EN) A textual representation.
 	 */
 	public static String moleculeToString(Molecule m) {
+		return moleculeToString(m, true);
+	}
+	
+	/**
+	 * (NL) Weergeef een molecuul als tekst. <br>
+	 * (EN) Represent a molecule as text.
+	 * 
+	 * @param m
+	 *            (NL) De molecuul. (EN) The molecule.
+	 * @param addCoefficient
+	 * 			  (NL) Moet de coëfficiënt van het molecuul ook worden geplaatst.
+	 *            (EN) Should the coefficient of the molecule also be added.
+	 * @return (NL) Een tekst weergave. (EN) A textual representation.
+	 */
+	public static String moleculeToString(Molecule m, boolean addCoefficient) {
 		StringBuilder sb = new StringBuilder();
 
-		if (m.getFactor() != 1 && m.getFactor() >= 0)
-			sb.append(Integer.toString(m.getFactor()));
-		else if(m.getFactor() < 0)
-			sb.append("?");
+		if(addCoefficient) {
+			if (m.getFactor() != 1 && m.getFactor() >= 0)
+				sb.append(Integer.toString(m.getFactor()));
+			else if(m.getFactor() < 0)
+				sb.append("?");
+		}
 
 		for (Element el : m.getElements()) {
 			sb.append(elementToString(el));

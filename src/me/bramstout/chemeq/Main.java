@@ -32,7 +32,7 @@ public class Main {
 	 * (NL) De versie van deze applicatie. <br>
 	 * (EN) The version of this application.
 	 */
-	public static final String VERSION = "v0.2";
+	public static final String VERSION = "v0.2.1";
 
 	/**
 	 * (NL) Dit is de methode die door Java wordt geroepen om het programma te

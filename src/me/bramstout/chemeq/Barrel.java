@@ -176,12 +176,14 @@ public class Barrel extends HBox {
 		 */
 		public BarrelMolecule(Molecule mol) {
 			this.mol = mol;
-			this.name = new Label(mol.getData());
+			this.name = new Label(DisplayUtil.moleculeToString(mol, false));
 
 			this.mass = new TextField("");
+			this.mass.setMinWidth(48);
 			this.mass.setMaxWidth(48);
 
 			this.type = new ChoiceBox<String>(FXCollections.observableArrayList("mol", "g", "kg"));
+			this.type.setMinWidth(48);
 			this.type.setMaxWidth(48);
 			this.type.setValue("mol");
 
@@ -210,9 +212,11 @@ public class Barrel extends HBox {
 
 		public void set(Molecule mol) {
 			if (!mol.getData().contentEquals(name.getText())) {
-				name.setText(mol.getData());
+				name.setText(DisplayUtil.moleculeToString(mol, false));
 				this.mass.setText("");
+				this.result.setText("0.00 " + this.type.getValue());
 			}
+			this.mol = mol;
 		}
 
 		/**

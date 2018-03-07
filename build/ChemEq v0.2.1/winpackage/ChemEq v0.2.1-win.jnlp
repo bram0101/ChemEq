@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="ChemEq v0.2.1-win.jnlp">
+  <information>
+    <title>ChemEq v0.2.1</title>
+    <vendor>Bram Stout</vendor>
+    <description>ChemEq is a tool to solve chemical reactions</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="ChemEq v0.2.1.jar" size="129888" download="null" />
+  </resources>
+  <jfx:javafx-desc  width="0" height="0" main-class="me.bramstout.chemeq.Main"  name="ChemEq" />
+  <update check="background"/>
+</jnlp>
