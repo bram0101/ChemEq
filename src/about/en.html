@@ -1,31 +1,209 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
+		<meta charset="utf-8">
 		<style>
 			body{
 				background-color: #f4f4f4;
+				font-family: "Times New Roman", Arial, serif;
+				font-size: 15px;
+			}
+			.border{
+				box-shadow: 0px 0px 4px 0px grey;
+				background-color: rgb(98%, 98%, 98%);
+				padding: 6px;
+				width: 240px;
+				margin-top: 12px;
+				margin-bottom: 12px;
+			}
+			a:link {
+			    color: rgb(12.5%, 25%, 37.5%); 
+			    background-color: transparent; 
+			    text-decoration: none;
+			}
+			
+			a:visited {
+			    color: rgb(12.5%, 25%, 37.5%); 
+			    background-color: transparent;
+			    text-decoration: none;
+			}
+			
+			a:hover {
+			    color: rgb(20%, 40%, 60%); 
+			    background-color: transparent;
+			    text-decoration: none;
+			}
+			
+			a:active {
+			    color: rgb(8%, 16%, 24%); 
+			    background-color: transparent;
+			    text-decoration: none;
+			}
+			img{
+				width: 100%;
+				box-shadow: 0px 0px 4px 0px grey;
+				margin-top: 6px;
+				margin-bottom: 6px;
+			}
+			.code{
+				background-color: white;
+				box-shadow: 0px 0px 4px 0px lightgrey;
+				padding: 4px;
 				font-family: Arial, serif;
-				font-size: 13px;
+			}
+			var{
+				color: rgb(30%, 30%, 60%);
 			}
 		</style>
 	</head>
 	<body>
-		<h1>About ChemEq</h1>
-		Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test
+		<h1>ChemEq</h1>
+		ChemEq is a software programme created by Bram Stout for his PWS.
+		With this programme, you can solve chemical equations and calculate how much of a substance you need or get after the reaction.
+		
+		<div class="border">
+			<h2>Index</h2>
+			<ol>
+				<a href="#gh"><li>Manual.</li></a>
+				<a href="#hwh"><li>How does it work.</li></a>
+				<ol>
+					<a href="#hwhp"><li>Parsing.</li></a>
+					<a href="#hwho"><li>Solving.</li></a>
+					<a href="#hwhm"><li>Barrel.</li></a>
+				</ol>
+				<a href="#l"><li>License.</li></a>
+			</ol>
+		</div>
+		
+		
+		<h2 id="gh">Manual.</h2>
+		The window is dividable into three separate areas.
+		<img src="venster.png">
+		<b>Area #1</b> is the input field vor the chemical equation. A valid equation is divided into two groups by an arrow;
+		the molecules on the left side of the arrow, the initial substances, and the molecules on the right side of the arrow, the reaction products.
+		The arrow that separates these two groups, can be an '=' character of the combination of characters '->'.<br>
+		Every group is further subdivided into molecules by a '+' character.<br>
+		Every molecule consists out of atoms. Each capital letter is seen as a new atom, with the lower case letters attached to the atom.
+		Every atom can also send with a number. This number is the index of the atom in the molecule, and indicates how many of the type of atom is in the molecule.<br>
+		It is possible to group atoms inside of a molecule. This is done by enclosing the group of atoms with brackets, '(' and ')'. A group of atoms can also have an index.<br>
+		A molecule can also end with a charge. This charge is indicated with a '+' character or a '-' character, followed by a number.
+		If the '+' or '-' character is behind the number, the programme will not read it as a charge.
+		This is against normal convention, but is due to the limitations of the parser.<br>
+		A molecule can also begin with a number. This number is the coefficient of the molecule, and indicates how many of those molecules you have.
+		The program tries to calculate the coefficients, however when adding your own coefficient in the input, the program could end up with incorrect results.
+		This is due to how the programme tries to solve the equation.<br>
+		<br>
+		<b>Area #2</b> is the result field. Here, the chemical equation is outputted but solved. It uses the same notation as the input field, Area #1.
+		If you click on the result field, the contents are copied to your clipboard. The content of the result field is not editable.<br>
+		<br>
+		<b>Area #3</b> is the barrel. Here, you can indicate how much of a certain substance you have or want, and the remaining values are calculatedv.
+		If there are multiple quantities indicates, the programma will calculate the largest amount that is possible to be created with the quantaties available.
+		The barrel is divided up into columns. Each column is for one molecule, and consists out of a few elements. At the top, it shows you which molecule it is.
+		In the center, you can indicate how much you have or want, and in what unit it is. At the bottom is shows you the result of the calculations.
+		
+		
+		<h2 id="hwh">How does it work.</h2>
+		
+		<h3 id="hwhp">Parsing.</h3>
+		The parser is a piece of code in the programme that converts the text inputted in the input area, to a different way of storing, so that the programme can use it better.
+		It goes character by character through the whole tekst. If the parser finds a capital letter, it sees that as a new atom.
+		If it finds a space and or a '+' character, it sees that as a new molecule. If he finds a number at the start of a new molecule, it sees that as a coefficient.
+		If it finds a number after the letters that create an atom, it sees that as an index. If it finds a '+' of a '-' character after a molecule with after that a number (
+		not followed by a letter), a space of another '+' or '-' character, then it sees it as a charge.
+		If it finds a '=' or a '-' character, and it is not a charge, then it sees it as the end of the left side of the chemical equations and it switches to the right side.
+		
+		<h3 id="hwho">Solving.</h3>
+		When the parser has parsed the input to something we can use, we have to solve it. The principle that the solver uses, is that on the left side there are the same amount of
+		atoms as on the right side. No atoms are created of destroyed. Because of this, we can easily create an equation for each type of atom. To better see what the solver does,
+		we use an example.
+		<div class="code">CaCl₂ + AgNO₃ = AgCl + Ca(NO₃)₂</div>
+		The coefficients, that we need to be calculated, can be replaced with a variable.
+		<div class="code"><var>a</var>CaCl₂ + <var>b</var>AgNO₃ = <var>c</var>AgCl + <var>d</var>Ca(NO₃)₂</div>
+		On both sides, there have to be the same amount of each type of atom. So for each type of atom, we create an equation. For calcium is looks like this:
+		<div class="code"><var>a</var>∗1 + <var>b</var>∗0 = <var>c</var>∗0 + <var>d</var>∗1</div>
+		In the first molecule, there is one calcium atom. In the second molecule, there is none. In the third molecule, there are also none. In the fourth molecule, there is one.
+		This can be simplified to:
+		<div class="code"><var>a</var> = <var>d</var></div>
+		By doing this for every type of atom, we get the following.
+		<div class="code">
+			<var>a</var> = <var>d</var><br>
+			<var>a</var>∗2 = <var>c</var>∗1<br>
+			<var>b</var>∗1 = <var>c</var>∗1<br>
+			<var>b</var>∗1 = <var>d</var>∗2<br>
+			<var>b</var>∗3 = <var>d</var>∗6<br>
+		</div><br>
+		Now we have to start somewhere to solve the equations. We do this by selecting one variable and setting that to 1.0.
+		Which variable we choose, is important. The variable has to make sure that we can also solve the other equations.
+		So we try to find an equation that only has one variable on both sides. Because of this, we easily have two variables already known to us,
+		and all other equations should be directly of indirectly solvable. In practise, this always works, but there could be a few chemical equations that would not be
+		solvable through this method. Since this does not or barely happen, we use this method. The variable <var>a</var> is a possible choise, so we take that one.
+		When it is 1.0, we get the following.
+		<div class="code">
+			<var>1</var> = <var>d</var><br>
+			<var>1</var>∗2 = <var>c</var>∗1<br>
+			<var>b</var>∗1 = <var>c</var>∗1<br>
+			<var>b</var>∗1 = <var>d</var>∗2<br>
+			<var>b</var>∗3 = <var>d</var>∗6<br>
+		</div>
+		Now we know <var>a</var> and <var>d</var>. We solve it again, and get the following.
+		<div class="code">
+			<var>1</var> = <var>d</var><br>
+			<var>2</var> = <var>c</var><br>
+			<var>b</var> = <var>2</var><br>
+			<var>b</var> = <var>2</var><br>
+			<var>b</var> = <var>2</var><br>
+		</div>
+		Now we also know <var>b</var> and <var>c</var>, and thus we know all the coefficients. The step of solving the equations we can directly solve, is repeated until everything
+		is solved, or we tried so many times, that we cannot go further.<br>
+		<br>
+		It could be that there are still molecules that are not related to the rest of the molecules, or that transfer electrons.
+		So we look at each equation that is not solved. If the equation on both ends have more that one variable, we cannot solve that and we skip it.
+		After that we look at the charges. If the charges for both molecules are the same, we set both coefficients to 1.0. If the charges differ, we look at the difference of the charges.
+		The charges on both sides of the equation has to be the same. So we look a how many times we need the two molecules in order to compensate for the difference in charges on both
+		sides of the equation. For this, we use the following equation.
+		<div class="code">
+			<var>factor</var>(<var>chargeA</var> - <var>chargeB</var>) = <var>chargesRight</var> - <var>chargesLeft</var>
+		</div>
+		Where <br><var>factor</var> the coefficient of both the molecules is, <br>
+		<var>chargeA</var> the charge of the left molecule is,<br>
+		<var>chargeB</var> the charge of the right molecule is,<br>
+		<var>chargesLeft</var> all charges on the left side of the equation summed up is,<br>
+		<var>chargesRight</var> all charges on the right side of the equation summed up is.<br>
+		We know everything except for <var>factor</var>, so we can easily calculate that. If we have done that, we store all the coefficients.<br>
+		<br>
+		The coefficients are now all known, but they are all floating point numbers and we want whole numbers. So we have to find a number that we can multiply every coefficient
+		with, to make every coefficient a whole number. For this we use an existing algorithm to calculate the lowest common multiple (LCM). We multiply every coefficient with this value.
+		That is everything that the solver does and we are now done.
+		
+		<h3 id="hwhm">Barrel.</h3>
+		In the barrel, you can indicate how much of a substance you have or want. It is the task of the barrel to calculate the remaining values.
+		This is done with the molar ratio. First, you divide by the coefficient of the current molecule, and then you multiply with the coefficient of the molecule you want.
+		This step is repeated for every remaining value. The problem now, is that if you put in more values, we have to decide which value we are going to use.
+		We do this by picking the lowest value, so that we calculate the largest quantity that we can possibly create. So we pick the lowest value after we divided by
+		the coefficients of the molecule. If the inputted value is in grams or kilograms, we convert it first to mol, by dividing by the molecular mass.
+		
+		
+		<h2 id="l">Licentie.</h2>
+		MIT License<br>
+		<br>
+		Copyright (c) 2017 Bram Stout<br>
+		<br>
+		Permission is hereby granted, free of charge, to any person obtaining a copy
+		of this software and associated documentation files (the "Software"), to deal
+		in the Software without restriction, including without limitation the rights
+		to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+		copies of the Software, and to permit persons to whom the Software is
+		furnished to do so, subject to the following conditions:<br>
+		<br>
+		The above copyright notice and this permission notice shall be included in all
+		copies or substantial portions of the Software.<br>
+		<br>
+		THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+		IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+		FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+		AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+		LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+		SOFTWARE.
 	</body>
 </html>

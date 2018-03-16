@@ -1,29 +1,215 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
+		<meta charset="utf-8">
 		<style>
 			body{
 				background-color: #f4f4f4;
+				font-family: "Times New Roman", Arial, serif;
+				font-size: 15px;
+			}
+			.border{
+				box-shadow: 0px 0px 4px 0px grey;
+				background-color: rgb(98%, 98%, 98%);
+				padding: 6px;
+				width: 240px;
+				margin-top: 12px;
+				margin-bottom: 12px;
+			}
+			a:link {
+			    color: rgb(12.5%, 25%, 37.5%); 
+			    background-color: transparent; 
+			    text-decoration: none;
+			}
+			
+			a:visited {
+			    color: rgb(12.5%, 25%, 37.5%); 
+			    background-color: transparent;
+			    text-decoration: none;
+			}
+			
+			a:hover {
+			    color: rgb(20%, 40%, 60%); 
+			    background-color: transparent;
+			    text-decoration: none;
+			}
+			
+			a:active {
+			    color: rgb(8%, 16%, 24%); 
+			    background-color: transparent;
+			    text-decoration: none;
+			}
+			img{
+				width: 100%;
+				box-shadow: 0px 0px 4px 0px grey;
+				margin-top: 6px;
+				margin-bottom: 6px;
+			}
+			.code{
+				background-color: white;
+				box-shadow: 0px 0px 4px 0px lightgrey;
+				padding: 4px;
 				font-family: Arial, serif;
-				font-size: 13px;
+			}
+			var{
+				color: rgb(30%, 30%, 60%);
 			}
 		</style>
 	</head>
 	<body>
-		<h1>Over ChemEq</h1>
-		Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test<br><br>Test
-		<br><br>Test
+		<h1>ChemEq</h1>
+		ChemEq is een software programma gemaakt door Bram Stout voor zijn PWS. 
+		Met dit programma kunt u reactievergelijkingen oplossen en berekenen hoeveel u van een stof nodig heeft of krijgt na de reactie.
+		
+		<div class="border">
+			<h2>Inhoudsopgave</h2>
+			<ol>
+				<a href="#gh"><li>Gebruikershandleiding.</li></a>
+				<a href="#hwh"><li>Hoe werkt het.</li></a>
+				<ol>
+					<a href="#hwhp"><li>Parsen.</li></a>
+					<a href="#hwho"><li>Oplossen.</li></a>
+					<a href="#hwhm"><li>Mengvat.</li></a>
+				</ol>
+				<a href="#l"><li>Licentie.</li></a>
+			</ol>
+		</div>
+		
+		
+		<h2 id="gh">Gebruikershandleiding.</h2>
+		Het venster is op te delen in drie vakken.
+		<img src="venster.png">
+		<b>Vak #1</b> is het invoervak voor de reactievergelijking. Een geldige reactievergelijking is opgedeeld in twee groepen doormiddel van een pijl: 
+		De moleculen aan de linkerkant van de pijl, de beginstoffen, en de moleculen aan de rechterkant van de pijl, de reactieproducten.
+		De pijl, die deze groepen opdeelt, kan een '=' teken zijn of de combinatie '->'.<br>
+		Elke groep is verder opgedeeld in moleculen doormiddel van een '+' teken.<br>
+		Elk molecuul bestaat uit atomen. Elke hoofdletter wordt gezien als een nieuw atoom, met de kleine letters daaraan toegevoegd.
+		Een atoom kan ook eindigen met een getal. Dit getal is het indexcijfer van het atoom in het molecuul, en geeft aan hoeveel van dat type atoom in het molecuul zitten.<br>
+		Het is mogelijk om atomen te groeperen in een molecuul. Dit wordt gedaan door haakjes, '(' en ')', om de groep atomen neer te zetten. Een groep atomen kan ook een indexcijfer hebben.<br>
+		Een molecuul kan ook eindigen met een lading. Deze lading wordt aangegeven met een '+' of een '-' teken gevolgd door een getal. 
+		Als het plus- of minteken achter het getal komt te staan, zal het programma het niet lezen als een lading. 
+		Dit is tegen de normale conventie, maar het komt door de limitaties van de parser.<br>
+		Een molecuul kan ook beginnen met een getal. Dit getal is het coëfficiënt van het molecuul, en geeft aan hoeveel van die moleculen u hebt.
+		Het programma probeert natuurlijk deze coëfficiënten te berekenen, maar het is mogelijk om zelf een coëfficiënt in te voeren, 
+		en dan probeert het programma de overige coëfficiënten te berekenen. Vanwege de manier hoe het programma werkt, zal niet altijd een correct antwoord ontstaan, 
+		als u zelf een coëfficiënt invoert.<br>
+		<br>
+		<b>Vak #2</b> is het resultatenvak. Hier komt de reactievergelijking te staan, maar dan opgelost. Het gebruikt dezelfde conventies voor het noteren van reactievergelijkingen
+		als bij het invoervak, Vak #1. Als u op het resultatenvak klikt, dan wordt de inhoud van het resultatenvak in uw klembord geplakt. Het resultatenvak is zelf niet te bewerken.<br>
+		<br>
+		<b>Vak #3</b> is het mengvat. Hier kunt u aangeven hoeveel u van een bepaalde stof hebt of wilt, en de overige stoffen worden uitberekend.
+		Zijn er bij meerdere moleculen hoeveelheden aangegeven, dan berekent het programma de hoeveelheid stof die dan maximaal te maken is.
+		Het mengvat is opgedeeld in kolommen. Elke kolom is voor één molecuul, en bestaat uit een paar objecten. 
+		Bovenaan staat welk molecuul het is. In het midden kunt u aangeven hoeveel stof u heeft als een getal (karakters die geen cijfers, punten of komma's zijn mogen niet worden ingevoerd),
+		en welke eenheid u wilt gebruiken. Onderaan staat het resultaat van de berekening.
+		
+		
+		<h2 id="hwh">Hoe werkt het.</h2>
+		
+		<h3 id="hwhp">Parsen.</h3>
+		De parser is een stuk code in het programma die de tekst uit het invoervak, omzet naar een andere vorm dat het programma beter kan gebruiken.
+		Hij gaat karakter voor karakter langs de hele tekst heen. Als de parser een hoofdletter tegenkomt, dan ziet hij dat als een nieuw atoom.
+		Vindt hij een spatie en/of een '+' teken, dan ziet hij dat als een nieuw molecuul. Ziet hij na een spatie of een '+' teken een getal,
+		dan ziet hij dat als een coëfficiënt. Ziet hij na letters, die een atoom vormen, een getal, dan ziet hij dat als een indexcijfer. Ziet hij een '+' of een '-' teken
+		na een molecuul met daar achter een getal (niet gevolgd door een letter), een spatie of nog een '+', '-' of '=' teken, dan is het een lading.
+		Vindt hij een '=' of een '-' teken, en het is geen lading, dan ziet hij dat als het einde van de linker kant van de reactievergelijking, en gaat hij nu bezig
+		met de rechterkant van de reactievergelijking.
+		
+		<h3 id="hwho">Oplossen.</h3>
+		Wanneer de parser de invoer heeft omgezet naar iets waar wij mee kunnen werken, moeten wij het oplossen. Het principe waar de solver (de naam voor een stuk code die iets oplost)
+		zich op berust, is dat aan de linkerkant er dezelfde atomen met dezelfde hoeveelheden moeten zijn. Er worden geen atomen aangemaakt of vernietigt.
+		Hierdoor kunnen wij makkelijk voor elk type atoom een vergelijking opstellen. Om beter te laten zien hoe de solver werkt, is er een voorbeeld.
+		<div class="code">CaCl₂ + AgNO₃ = AgCl + Ca(NO₃)₂</div>
+		De coëfficiënten, die wij moeten berekenen, kunnen wij vervangen met een variabel.
+		<div class="code"><var>a</var>CaCl₂ + <var>b</var>AgNO₃ = <var>c</var>AgCl + <var>d</var>Ca(NO₃)₂</div>
+		Aan beide kanten moeten er evenveel van dezelfde atoomsoorten zijn. Dus maken wij voor elk atoomsoort een vergelijking. Voor calcium ziet het er zo uit:
+		<div class="code"><var>a</var>∗1 + <var>b</var>∗0 = <var>c</var>∗0 + <var>d</var>∗1</div>
+		In het eerste molecuul zit één calcium atoom. In het tweede molecuul zitten er geen. In het derde molecuul zitten er geen. In het vierde molecuul zit één calcium atoom.
+		Dit is te versimpelen naar:
+		<div class="code"><var>a</var> = <var>d</var></div>
+		Door dit ook te doen voor alle andere atoomsoorten, krijgen wij de volgende vergelijkingen.
+		<div class="code">
+			<var>a</var> = <var>d</var><br>
+			<var>a</var>∗2 = <var>c</var>∗1<br>
+			<var>b</var>∗1 = <var>c</var>∗1<br>
+			<var>b</var>∗1 = <var>d</var>∗2<br>
+			<var>b</var>∗3 = <var>d</var>∗6<br>
+		</div><br>
+		Nu moeten wij ergens beginnen om deze vergelijkingen op te lossen. Dit doen wij door één van de variabelen gelijk te stellen aan 1,0.
+		Welk variabel wij kiezen, is belangrijk. Het variabel moet er dan voor zorgen dat wij de andere vergelijkingen ook kunnen oplossen.
+		Dus kijken wij naar welke vergelijking maar één variabel aan beide kanten heeft. Hierdoor hebben wij direct twee variabelen bekend,
+		en zouden alle andere vergelijkingen direct of indirect ook oplosbaar moeten zijn. In de praktijk werkt dit altijd, maar het kan zijn,
+		dat bij een paar reactievergelijkingen hij hier vast komt te zitten. Aangezien dit niet of nauwelijks voorkomt, gebruiken wij deze methode.
+		Het variabel <var>a</var> is een mogelijke keuze, dus nemen wij <var>a</var>. Als <var>a</var> 1,0 is, dan krijgen wij het volgende.
+		<div class="code">
+			<var>1</var> = <var>d</var><br>
+			<var>1</var>∗2 = <var>c</var>∗1<br>
+			<var>b</var>∗1 = <var>c</var>∗1<br>
+			<var>b</var>∗1 = <var>d</var>∗2<br>
+			<var>b</var>∗3 = <var>d</var>∗6<br>
+		</div>
+		Nu weten wij <var>a</var> en <var>d</var>. Wij lossen dit nog een keer op.
+		<div class="code">
+			<var>1</var> = <var>d</var><br>
+			<var>2</var> = <var>c</var><br>
+			<var>b</var> = <var>2</var><br>
+			<var>b</var> = <var>2</var><br>
+			<var>b</var> = <var>2</var><br>
+		</div>
+		Nu weten wij ook <var>b</var> en <var>c</var>, en weten wij dus alle coëfficiënten. De stap, van de vergelijkingen die wij direct kunnen oplossen, op te lossen,
+		herhalen wij telkens totdat alles is opgelost of totdat wij het zo vaak hebben geprobeerd, dat wij maar opgeven.<br>
+		<br>
+		Het kan nog wel zijn, dat er nog moleculen over zijn die niet gerelateerd waren aan de rest van de moleculen, of moleculen die juist elektronen overdraagt.
+		Dus wij gaan langs alle vergelijkingen die niet opgelost zijn. Als de vergelijking aan beide kanten meer dan één variabel heeft, dan kunnen wij het niet oplossen.
+		In de praktijk gebeurd het niet dat er meerdere variabelen zijn in de vergelijkingen die niet opgelost zijn. Daarna kijken wij naar de ladingen. Als de ladingen gelijk zijn,
+		dan zijn beide variabelen gewoon 1,0. Als de ladingen niet gelijk zijn, dan kijken wij naar het verschil in ladingen. De ladingen aan beide kanten van de reactievergelijking verschilt.
+		Dus moeten wij het verschil opheffen. Hier gebruiken wij de volgende vergelijking voor.
+		<div class="code">
+			<var>factor</var>(<var>chargeA</var> - <var>chargeB</var>) = <var>chargesRight</var> - <var>chargesLeft</var>
+		</div>
+		Waar <br><var>factor</var> de coëfficiënten van beide moleculen is, <br>
+		<var>chargeA</var> de lading van het linker molecuul is,<br>
+		<var>chargeB</var> de lading van het rechter molecuul is,<br>
+		<var>chargesLeft</var> alle ladingen van de linker kant opgeteld is,<br>
+		<var>chargesRight</var> alle ladingen van de rechter kant opgeteld is.<br>
+		Wij weten allen behalve <var>factor</var>, dus kunnen wij die makkelijk berekenen. Als wij dat hebben gedaan, slaan wij die coëfficiënten op.
+		<br>
+		<br>
+		De coëfficiënten zijn nu allemaal bekend, maar het zijn kommagetallen en wij willen hele getalen. Dus wij moeten een getal vinden waar wij mee kunnen vermenigvuldigen 
+		om zo een heel getal te krijgen. Hiervoor gebruiken wij een bestaand algoritme om de laagste gemeenschappelijke veelvoud (Lowest Common Multiple, LCM) te berekenen. 
+		Hiermee vermenigvuldigen wij alles, en dan zijn wij klaar.
+		
+		<h3 id="hwhm">Mengvat.</h3>
+		Bij het mengvat kunt u aangeven hoeveel van een stof u heeft of wilt. Het is de taak van het mengvat om de overige waardes te berekenen.
+		Dit wordt gedaan doormiddel van de molverhouding. Eerst deelt u door de coëfficiënt van het huidige molecuul, en daarna vermenigvuldigt u met de coëfficiënt van het
+		gewenste molecuul. Deze stap wordt herhaald voor elke overige waarde. Het probleem nu, is dat als er meerdere waardes al zijn ingevuld, moeten wij bepalen welke waarde
+		wij gaan gebruiken om de overige waardes te berekenen. Hiervoor nemen wij de kleinste waarde, want wij willen weten wat de grootste hoeveelheid is die wij zouden
+		kunnen maken, en daarbij kan het zijn dat er een stof in overmaat aanwezig is. Hiervoor kiezen wij het kleinste getal, nadat wij elke ingevulde waarde door zijn
+		coëfficiënt hebben gedeeld. Nu wij de kleinste hoeveelheid hebben, vermenigvuldigen wij deze waarde met de coëfficiënt van elk molecuul om de andere waardes te berekenen.
+		De ingevulde waardes kunnen ook in grammen of kilogrammen zijn. Deze worden dan eerst naar mol omgezet, doormiddel van het de delen door de moleculaire massa van het molecuul.
+		
+		
+		<h2 id="l">Licentie.</h2>
+		MIT License<br>
+		<br>
+		Copyright (c) 2017 Bram Stout<br>
+		<br>
+		Permission is hereby granted, free of charge, to any person obtaining a copy
+		of this software and associated documentation files (the "Software"), to deal
+		in the Software without restriction, including without limitation the rights
+		to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+		copies of the Software, and to permit persons to whom the Software is
+		furnished to do so, subject to the following conditions:<br>
+		<br>
+		The above copyright notice and this permission notice shall be included in all
+		copies or substantial portions of the Software.<br>
+		<br>
+		THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+		IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+		FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+		AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+		LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+		SOFTWARE.
 	</body>
 </html>

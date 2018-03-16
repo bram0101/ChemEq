@@ -411,7 +411,7 @@ public class Solver {
 			keyOrder.add(entry.getKey());
 		}
 
-		// (NL) Bereken de laagste gemeenschappelijke veelhoud en vermenigvuldig elke
+		// (NL) Bereken de laagste gemeenschappelijke veelvoud en vermenigvuldig elke
 		// coëfficiënt hiermee.
 		// (EN) Calculate the lowest common multiple and multiply it with all known
 		// coëfficients.
